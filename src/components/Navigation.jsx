@@ -37,7 +37,7 @@ const Navigation = () => {
             </svg>
           </div>
           <div>
-            <div className="font-bold text-xl text-foreground" style={{fontFamily: 'var(--font-display)'}}>STEAM Village</div>
+            <div className="font-bold text-xl text-foreground" style={{fontFamily: 'var(--font-display)'}}>Jellying</div>
             <div className="text-xs text-body-text">{t.nav.subtitle}</div>
           </div>
         </div>
@@ -49,12 +49,12 @@ const Navigation = () => {
         <div className="flex items-center gap-3">
           <button
             onClick={toggleLang}
-            className="px-3 py-2 rounded-[8px] text-sm font-semibold border border-primary/20 text-primary hover:bg-primary/5 transition-all"
+            className="px-3 py-2 rounded-full text-sm font-semibold border border-primary/20 text-primary hover:bg-primary/5 transition-all"
           >
             {lang === 'ko' ? 'EN' : '한'}
           </button>
           <button
-            className="bg-primary text-white px-6 py-3 rounded-[12px] font-semibold hover:bg-primary/90 transition-all"
+            className="bg-primary text-white px-6 py-3 rounded-full font-semibold hover:bg-primary/90 transition-all"
             tabIndex="0"
             onClick={() => document.getElementById("pricing")?.scrollIntoView({ behavior: "smooth" })}
           >

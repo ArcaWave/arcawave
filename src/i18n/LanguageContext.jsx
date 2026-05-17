@@ -3,8 +3,15 @@ import translations from './translations'
 
 const LanguageContext = createContext()
 
+const getInitialLang = () => {
+  const params = new URLSearchParams(window.location.search)
+  const urlLang = params.get('lang')
+  if (urlLang && translations[urlLang]) return urlLang
+  return 'ko'
+}
+
 export const LanguageProvider = ({ children }) => {
-  const [lang, setLang] = useState('ko')
+  const [lang, setLang] = useState(getInitialLang)
 
   const t = translations[lang]
 

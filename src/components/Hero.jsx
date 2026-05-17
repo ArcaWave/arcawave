@@ -71,6 +71,35 @@ const Hero = () => {
             transition={{ duration: 0.6 }}
             className="space-y-8"
           >
+            {/* University Logos + Subtitle */}
+            <motion.div
+              initial={{ opacity: 0, y: 10 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.5 }}
+              className="space-y-3"
+            >
+              <div className="flex items-center gap-8 opacity-50">
+                {[
+                  { src: '/assets/images/logos/snu.png', alt: '서울대학교', h: 'h-[36px]' },
+                  { src: '/assets/images/logos/kaist.png', alt: 'KAIST', h: 'h-[36px]' },
+                  { src: '/assets/images/logos/berkeley_.svg', alt: 'UC Berkeley', h: 'h-[36px]' },
+                ].map((logo, i) => (
+                  <motion.img
+                    key={logo.alt}
+                    src={logo.src}
+                    alt={logo.alt}
+                    className={`${logo.h} w-auto`}
+                    initial={{ opacity: 0, y: 8 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ delay: 0.15 + i * 0.1 }}
+                  />
+                ))}
+              </div>
+              <p className="text-sm font-semibold tracking-wide text-foreground/70">
+                {t.hero.subtitle}
+              </p>
+            </motion.div>
+            {/* Tags */}
             <div className="flex flex-wrap gap-3">
               {t.hero.tags.map((tag, i) => (
                 <motion.div
@@ -88,34 +117,54 @@ const Hero = () => {
                 </motion.div>
               ))}
             </div>
-            <h1 className="leading-tight" style={{fontSize: '48px', fontWeight: 800, background: 'linear-gradient(135deg, rgb(124, 58, 237) 0%, rgb(249, 115, 22) 100%)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent'}}>
+            <h1 className="leading-tight" style={{background: 'linear-gradient(135deg, rgb(124, 58, 237) 0%, rgb(249, 115, 22) 100%)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent'}}>
               {t.hero.title}<br />{t.hero.titleBr}
             </h1>
-            <p className="text-base leading-relaxed" style={{color: 'rgb(100, 116, 139)'}}>
+            <p className="text-base leading-relaxed text-body-text">
               {t.hero.desc}
             </p>
             <div className="flex flex-col sm:flex-row gap-4">
-              <button className="bg-primary text-white px-8 py-4 rounded-[12px] flex items-center justify-center gap-2 text-base font-semibold" tabIndex="0" style={{boxShadow: 'rgba(124, 58, 237, 0.2) 0px 4px 12px'}}>
+              <motion.button
+                className="bg-primary text-white px-8 py-4 rounded-full flex items-center justify-center gap-2 text-base font-semibold"
+                tabIndex="0"
+                whileHover={{ scale: 1.02 }}
+                whileTap={{ scale: 0.97 }}
+              >
                 {t.hero.ctaPrimary}
                 <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="lucide lucide-arrow-right w-5 h-5">
                   <path d="M5 12h14"></path>
                   <path d="m12 5 7 7-7 7"></path>
                 </svg>
-              </button>
-              <button className="bg-transparent text-foreground px-8 py-4 rounded-[12px] border-2 border-primary/20 flex items-center justify-center gap-2 text-base font-semibold" tabIndex="0" style={{boxShadow: 'rgba(124, 58, 237, 0.08) 0px 2px 8px'}}>
+              </motion.button>
+              <motion.button
+                className="bg-white text-foreground px-8 py-4 rounded-full border border-border flex items-center justify-center gap-2 text-base font-semibold"
+                tabIndex="0"
+                whileHover={{ scale: 1.02 }}
+                whileTap={{ scale: 0.97 }}
+              >
                 <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="lucide lucide-play w-5 h-5">
                   <polygon points="6 3 20 12 6 21 6 3"></polygon>
                 </svg>
                 {t.hero.ctaSecondary}
-              </button>
+              </motion.button>
             </div>
-            <div className="pt-4 flex items-center gap-2 text-sm" style={{color: 'rgb(100, 116, 139)'}}>
-              <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="lucide lucide-award w-4 h-4 text-success flex-shrink-0">
-                <path d="m15.477 12.89 1.515 8.526a.5.5 0 0 1-.81.47l-3.58-2.687a1 1 0 0 0-1.197 0l-3.586 2.686a.5.5 0 0 1-.81-.469l1.514-8.526"></path>
-                <circle cx="12" cy="8" r="6"></circle>
-              </svg>
-              <span>{t.hero.credential}</span>
-            </div>
+            {/* Trust Badges */}
+            <motion.div
+              initial={{ opacity: 0, y: 10 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.5, delay: 0.6 }}
+              className="pt-2 flex flex-wrap items-center gap-3"
+            >
+              {t.hero.trustBadges?.map((badge, i) => (
+                <div
+                  key={i}
+                  className="flex items-center gap-1.5 bg-white/80 backdrop-blur-sm border border-border/50 rounded-full px-3.5 py-1.5 shadow-sm transition-all duration-200 hover:shadow-md hover:-translate-y-0.5"
+                >
+                  <span className="text-sm">{badge.icon}</span>
+                  <span className="text-xs font-medium text-body-text">{badge.text}</span>
+                </div>
+              ))}
+            </motion.div>
           </motion.div>
           <motion.div
             initial={{ opacity: 0, x: 30 }}
@@ -123,47 +172,26 @@ const Hero = () => {
             transition={{ duration: 0.6, delay: 0.2 }}
             className="relative"
           >
-            <div className="relative bg-white rounded-[20px] p-8 lg:p-12 flex items-center justify-center min-h-[400px] lg:min-h-[500px] border-4 border-dashed border-primary/20" style={{boxShadow: 'rgba(124, 58, 237, 0.1) 0px 8px 24px'}}>
-              <div className="text-center space-y-4">
-                <div className="w-20 h-20 mx-auto bg-primary/10 rounded-full flex items-center justify-center">
-                  <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="lucide lucide-palette w-10 h-10 text-primary">
-                    <circle cx="13.5" cy="6.5" r=".5" fill="currentColor"></circle>
-                    <circle cx="17.5" cy="10.5" r=".5" fill="currentColor"></circle>
-                    <circle cx="8.5" cy="7.5" r=".5" fill="currentColor"></circle>
-                    <circle cx="6.5" cy="12.5" r=".5" fill="currentColor"></circle>
-                    <path d="M12 2C6.5 2 2 6.5 2 12s4.5 10 10 10c.926 0 1.648-.746 1.648-1.688 0-.437-.18-.835-.437-1.125-.29-.289-.438-.652-.438-1.125a1.64 1.64 0 0 1 1.668-1.668h1.996c3.051 0 5.555-2.503 5.555-5.554C21.965 6.012 17.461 2 12 2z"></path>
-                  </svg>
-                </div>
-                <p className="text-lg font-semibold text-foreground">{t.hero.mockupTitle}</p>
-                <p className="text-sm" style={{color: 'rgb(100, 116, 139)'}}>{t.hero.mockupDesc}</p>
+            {/* App Video */}
+            <div className="relative p-4">
+              {/* Corner brackets */}
+              <div className="absolute top-0 left-0 w-10 h-10 border-t-2 border-l-2 border-purple-300 rounded-tl-xl"></div>
+              <div className="absolute top-0 right-0 w-10 h-10 border-t-2 border-r-2 border-purple-300 rounded-tr-xl"></div>
+              <div className="absolute bottom-0 left-0 w-10 h-10 border-b-2 border-l-2 border-purple-300 rounded-bl-xl"></div>
+              <div className="absolute bottom-0 right-0 w-10 h-10 border-b-2 border-r-2 border-purple-300 rounded-br-xl"></div>
+              {/* Dashed border */}
+              <div className="absolute inset-2 rounded-2xl border-2 border-dashed border-purple-200 pointer-events-none"></div>
+              <div className="relative rounded-2xl overflow-hidden shadow-card-lg">
+                <video
+                  className="w-full h-auto"
+                  autoPlay
+                  loop
+                  muted
+                  playsInline
+                >
+                  <source src="/assets/videos/AI_Ed.mp4" type="video/mp4" />
+                </video>
               </div>
-              <div className="absolute top-4 left-4 w-8 h-8 border-l-2 border-t-2 border-primary/30 rounded-tl-lg"></div>
-              <div className="absolute top-4 right-4 w-8 h-8 border-r-2 border-t-2 border-primary/30 rounded-tr-lg"></div>
-              <div className="absolute bottom-4 left-4 w-8 h-8 border-l-2 border-b-2 border-primary/30 rounded-bl-lg"></div>
-              <div className="absolute bottom-4 right-4 w-8 h-8 border-r-2 border-b-2 border-primary/30 rounded-br-lg"></div>
-
-              {/* Floating decorations */}
-              <motion.span
-                className="absolute -top-4 -right-4 text-4xl"
-                animate={{ rotate: [0, 10, -10, 0] }}
-                transition={{ duration: 3, repeat: Infinity }}
-              >
-                🎨
-              </motion.span>
-              <motion.span
-                className="absolute -bottom-4 -left-4 text-3xl"
-                animate={{ y: [0, -10, 0] }}
-                transition={{ duration: 2, repeat: Infinity }}
-              >
-                ⭐
-              </motion.span>
-              <motion.span
-                className="absolute top-1/4 -right-8 text-2xl"
-                animate={{ scale: [1, 1.2, 1] }}
-                transition={{ duration: 2, repeat: Infinity, delay: 0.5 }}
-              >
-                🖌️
-              </motion.span>
             </div>
           </motion.div>
         </div>

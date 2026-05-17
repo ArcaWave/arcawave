@@ -2,43 +2,85 @@
 @tailwind components;
 @tailwind utilities;
 
+/* ─── Arcawave Design System ───────────────────────────────────────
+ * Concept:  Quiet container, loud idea.
+ *           The page is a calm, paper-like environment.
+ *           The ideas inside are confident and direct.
+ *
+ * Mood:     Editorial sophistication × calm tech.
+ *           Reading-room calm. Mature, not flashy.
+ *           One accent gesture per section, never decoration for decoration's sake.
+ *
+ * System:   - Ink + Paper base, with a single brand gradient as the sole accent.
+ *           - Type-driven layouts. Whitespace as a first-class element.
+ *           - Motion is gentle: appearance, drift, never demanding.
+ * ────────────────────────────────────────────────────────────────── */
 :root {
+    /* Font families */
     --font-display: 'Montserrat', system-ui, sans-serif;
-    --background: #FFFBF5;
-    --foreground: #1E1B4B;
+    --font-body: 'Pretendard', -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', sans-serif;
+    --font-mono: 'IBM Plex Sans', ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+
+    /* ─── Paper & Ink ─── */
+    --paper: #FBF7F0;          /* warm cream — the page itself */
+    --paper-soft: #F5EFE4;     /* a touch warmer for hover states */
+    --paper-tint: #F0E9DB;     /* edge tints for cards */
+    --ink: #1E1B4B;            /* primary text, anchors */
+    --ink-mute: #5C5878;       /* body / supporting text */
+    --ink-hush: #94909F;       /* captions, mono labels */
+
+    /* Backward-compatible aliases (the existing components read these) */
+    --background: var(--paper);
     --card: #FFFFFF;
-    --card-foreground: #1E1B4B;
     --card-muted: #F5F0FF;
-    --primary: #7C3AED;
-    --primary-foreground: #FFFFFF;
-    --secondary: #F97316;
-    --secondary-foreground: #FFFFFF;
     --muted: #F5F0FF;
-    --muted-foreground: #64748B;
-    --accent: #F97316;
-    --accent-foreground: #FFFFFF;
+    --foreground: var(--ink);
+    --body-text: var(--ink-mute);
+    --caption: var(--ink-hush);
+    --border: rgba(30, 27, 75, 0.10);
+    --input: rgba(30, 27, 75, 0.10);
+
+    /* ─── Brand accent (one gradient, used sparingly) ─── */
+    --grad-warm: linear-gradient(135deg, #7C3AED 0%, #F97316 60%, #F472B6 100%);
+    --grad-soft: linear-gradient(135deg, #7C3AED 0%, #F472B6 100%);
+    --primary: #7C3AED;
+    --primary-light: #A855F7;
+    --secondary: #F97316;
     --success: #10B981;
-    --success-foreground: #FFFFFF;
     --pink: #F472B6;
-    --border: #E2E8F0;
-    --input: #E2E8F0;
     --ring: #7C3AED;
-    --radius: 1.25rem;
+
+    /* ─── Spacing rhythm ─── */
+    --space-section: clamp(96px, 14vw, 160px);
+    --space-readline: 680px;       /* max width for body copy */
+    --space-container: 1240px;     /* outer container */
+
+    /* ─── Radii ─── */
+    --r-sm: 12px;
+    --r-md: 20px;
+    --r-lg: 28px;
+    --r-pill: 9999px;
+    --radius: var(--r-md);
+
+    /* ─── Motion easing ─── */
+    --ease-out-soft: cubic-bezier(0.2, 0.7, 0.2, 1);
 }
 
+/* ─── Reset ─── */
 * {
     margin: 0;
     padding: 0;
     box-sizing: border-box;
 }
 
+/* ─── Base Typography ─── */
 html {
     scroll-behavior: smooth;
     font-size: 16px;
 }
 
 body {
-    font-family: 'Pretendard', -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen', 'Ubuntu', 'Cantarell', sans-serif;
+    font-family: var(--font-body);
     color: var(--foreground);
     background-color: var(--background);
     line-height: 1.6;
@@ -47,7 +89,84 @@ body {
     overflow-x: hidden;
 }
 
-/* Custom scrollbar */
+/* Heading hierarchy */
+h1 {
+    font-size: clamp(36px, 5vw, 48px);
+    font-weight: 800;
+    line-height: 1.2;
+    letter-spacing: -0.02em;
+    color: var(--foreground);
+}
+
+h2 {
+    font-size: clamp(28px, 4vw, 40px);
+    font-weight: 800;
+    line-height: 1.3;
+    letter-spacing: -0.015em;
+    color: var(--foreground);
+}
+
+h3 {
+    font-size: clamp(20px, 3vw, 26px);
+    font-weight: 700;
+    line-height: 1.4;
+    letter-spacing: -0.01em;
+    color: var(--foreground);
+}
+
+h4 {
+    font-size: 18px;
+    font-weight: 700;
+    line-height: 1.4;
+    color: var(--foreground);
+}
+
+/* ─── Utility Classes ─── */
+@layer components {
+    /* Badge pill */
+    .badge {
+        @apply inline-flex items-center gap-2 px-5 py-2.5 rounded-full text-sm font-semibold transition-all duration-200;
+    }
+    .badge-primary {
+        background-color: rgba(124, 58, 237, 0.08);
+        color: var(--primary);
+    }
+    .badge-secondary {
+        background-color: rgba(249, 115, 22, 0.08);
+        color: var(--secondary);
+    }
+    .badge-success {
+        background-color: rgba(16, 185, 129, 0.08);
+        color: var(--success);
+    }
+
+    /* Section wrapper */
+    .section-container {
+        @apply max-w-[1200px] mx-auto;
+    }
+
+    /* Card base */
+    .card {
+        @apply bg-white rounded-[20px] transition-all duration-300;
+        box-shadow: rgba(124, 58, 237, 0.08) 0px 2px 12px;
+    }
+    .card:hover {
+        transform: translateY(-4px);
+        box-shadow: rgba(0, 0, 0, 0.08) 0px 8px 30px;
+    }
+
+    /* Button styles - pill shape for friendly feel */
+    .btn-primary {
+        @apply bg-primary text-white px-8 py-4 rounded-full font-semibold text-base transition-all duration-200 hover:opacity-90 hover:brightness-105;
+        box-shadow: rgba(124, 58, 237, 0.25) 0px 4px 16px;
+    }
+    .btn-secondary {
+        @apply bg-white text-foreground px-8 py-4 rounded-full font-semibold text-base border border-border transition-all duration-200 hover:border-primary/30 hover:brightness-105;
+        box-shadow: rgba(0, 0, 0, 0.04) 0px 2px 8px;
+    }
+}
+
+/* ─── Scrollbar ─── */
 ::-webkit-scrollbar {
     width: 8px;
 }
@@ -57,10 +176,10 @@ body {
 }
 
 ::-webkit-scrollbar-thumb {
-    background: rgb(124, 58, 237);
+    background: var(--primary);
     border-radius: 4px;
 }
 
 ::-webkit-scrollbar-thumb:hover {
-    background: rgb(99, 46, 190);
+    background: #632ebe;
 }
