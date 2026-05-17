@@ -1,4 +1,4 @@
-import React, { useRef, useState, useEffect } from 'react'
+import React, { useRef, useState, useEffect, useCallback } from 'react'
 import { motion } from 'framer-motion'
 import { useLanguage } from '../../i18n/LanguageContext'
 
@@ -35,42 +35,56 @@ const accentMap = {
   },
 }
 
+const GAP_PX = 20 // matches Tailwind gap-5
+
+/**
+ * ArcaNews — transform-based carousel.
+ *
+ * Why not overflow-x:auto? It captures vertical wheel events on hover and
+ * interferes with page scroll (Safari especially). We use a translateX'd
+ * track inside an overflow:hidden viewport instead — the viewport just clips,
+ * it doesn't scroll. Vertical wheel naturally bubbles to the page.
+ * Navigation is via the prev/next buttons.
+ */
 const ArcaNews = () => {
   const { t } = useLanguage()
   const news = t.arca.news
-  const trackRef = useRef(null)
-  const [scrollState, setScrollState] = useState({ canPrev: false, canNext: true })
 
-  const updateScrollState = () => {
-    const el = trackRef.current
-    if (!el) return
-    const maxScroll = el.scrollWidth - el.clientWidth
-    setScrollState({
-      canPrev: el.scrollLeft > 8,
-      canNext: el.scrollLeft < maxScroll - 8,
+  const viewportRef = useRef(null)
+  const trackRef = useRef(null)
+  const [offset, setOffset] = useState(0)         // current translateX in px (≤ 0)
+  const [maxOffset, setMaxOffset] = useState(0)   // most-negative allowed offset
+
+  // Measure how far the track can travel.
+  const recalcBounds = useCallback(() => {
+    const viewport = viewportRef.current
+    const track = trackRef.current
+    if (!viewport || !track) return
+    const overflowPx = Math.max(0, track.scrollWidth - viewport.clientWidth)
+    const newMax = -overflowPx
+    setMaxOffset(newMax)
+    // Clamp current offset if window resized smaller
+    setOffset((prev) => Math.max(newMax, Math.min(0, prev)))
+  }, [])
+
+  useEffect(() => {
+    recalcBounds()
+    window.addEventListener('resize', recalcBounds)
+    return () => window.removeEventListener('resize', recalcBounds)
+  }, [recalcBounds])
+
+  const stepBy = (direction) => {
+    const card = trackRef.current?.querySelector('[data-news-card]')
+    const cardWidth = card ? card.offsetWidth + GAP_PX : 340
+    setOffset((prev) => {
+      const next = prev + direction * -cardWidth
+      // Clamp [maxOffset, 0]
+      return Math.max(maxOffset, Math.min(0, next))
     })
   }
 
-  useEffect(() => {
-    updateScrollState()
-    const el = trackRef.current
-    if (!el) return
-    el.addEventListener('scroll', updateScrollState, { passive: true })
-    window.addEventListener('resize', updateScrollState)
-    return () => {
-      el.removeEventListener('scroll', updateScrollState)
-      window.removeEventListener('resize', updateScrollState)
-    }
-  }, [])
-
-  const scrollByAmount = (direction) => {
-    const el = trackRef.current
-    if (!el) return
-    // Scroll ~ one card width including gap so we land on a snap point
-    const card = el.querySelector('[data-news-card]')
-    const cardWidth = card ? card.offsetWidth + 20 /* gap */ : 340
-    el.scrollBy({ left: direction * cardWidth, behavior: 'smooth' })
-  }
+  const canPrev = offset < 0
+  const canNext = offset > maxOffset
 
   return (
     <section id="news" className="relative py-28 px-6">
@@ -109,8 +123,8 @@ const ArcaNews = () => {
           <div className="flex items-center gap-2 self-start md:self-end">
             <button
               type="button"
-              onClick={() => scrollByAmount(-1)}
-              disabled={!scrollState.canPrev}
+              onClick={() => stepBy(-1)}
+              disabled={!canPrev}
               aria-label={news.prev}
               className="w-11 h-11 rounded-full border border-foreground/15 bg-white text-foreground hover:border-foreground/40 transition-all disabled:opacity-30 disabled:cursor-not-allowed flex items-center justify-center"
             >
@@ -120,8 +134,8 @@ const ArcaNews = () => {
             </button>
             <button
               type="button"
-              onClick={() => scrollByAmount(1)}
-              disabled={!scrollState.canNext}
+              onClick={() => stepBy(1)}
+              disabled={!canNext}
               aria-label={news.next}
               className="w-11 h-11 rounded-full bg-foreground text-white hover:bg-foreground/90 transition-all disabled:opacity-30 disabled:cursor-not-allowed flex items-center justify-center"
             >
@@ -132,28 +146,32 @@ const ArcaNews = () => {
           </div>
         </motion.div>
 
-        {/* Carousel track */}
-        <div className="relative -mx-6 px-6">
+        {/* Viewport (clips, doesn't scroll) — vertical wheel passes through to page */}
+        <div
+          ref={viewportRef}
+          className="relative -mx-6 px-6 overflow-hidden"
+        >
           {/* Edge fades */}
           <div
-            className="pointer-events-none absolute left-0 top-0 bottom-3 w-12 z-10"
+            className="pointer-events-none absolute left-0 top-0 bottom-0 w-12 z-10"
             style={{
-              background: 'linear-gradient(to right, var(--background, #FFFBF5), transparent)',
+              background: 'linear-gradient(to right, var(--paper, #FBF7F0), transparent)',
             }}
           />
           <div
-            className="pointer-events-none absolute right-0 top-0 bottom-3 w-12 z-10"
+            className="pointer-events-none absolute right-0 top-0 bottom-0 w-12 z-10"
             style={{
-              background: 'linear-gradient(to left, var(--background, #FFFBF5), transparent)',
+              background: 'linear-gradient(to left, var(--paper, #FBF7F0), transparent)',
             }}
           />
 
+          {/* Track — transformed, not scrolled */}
           <div
             ref={trackRef}
-            className="flex gap-5 overflow-x-auto pb-3 snap-x snap-mandatory scrollbar-hide"
+            className="flex gap-5 pb-3 will-change-transform"
             style={{
-              scrollbarWidth: 'none',
-              msOverflowStyle: 'none',
+              transform: `translate3d(${offset}px, 0, 0)`,
+              transition: 'transform 0.55s cubic-bezier(0.2, 0.7, 0.2, 1)',
             }}
           >
             {news.items.map((item, i) => {
@@ -170,7 +188,7 @@ const ArcaNews = () => {
                   viewport={{ once: true, margin: '-50px' }}
                   transition={{ duration: 0.45, delay: i * 0.05 }}
                   whileHover={{ y: -4 }}
-                  className="group flex-shrink-0 w-[320px] md:w-[360px] bg-white rounded-3xl border border-foreground/5 overflow-hidden snap-start hover:shadow-card-lg transition-shadow duration-300"
+                  className="group flex-shrink-0 w-[320px] md:w-[360px] bg-white rounded-3xl border border-foreground/5 overflow-hidden hover:shadow-card-lg transition-shadow duration-300"
                 >
                   {/* Thumbnail — paper with a soft accent corner glow */}
                   <div
@@ -228,15 +246,11 @@ const ArcaNews = () => {
                 </motion.a>
               )
             })}
-
-            {/* Trailing spacer so the last card can snap fully */}
-            <div className="flex-shrink-0 w-1" aria-hidden />
           </div>
         </div>
       </div>
 
       <style>{`
-        .scrollbar-hide::-webkit-scrollbar { display: none; }
         .line-clamp-2 {
           display: -webkit-box;
           -webkit-line-clamp: 2;

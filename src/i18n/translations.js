@@ -464,7 +464,7 @@ const translations = {
       desc2: '서울대 · KAIST · 미대 · UC Berkeley 출신의 제작과 감수, 그리고 엄선된 교육 콘텐츠',
       team: [
         {
-          name: '두지언',
+          name: 'Journey',
           role: 'CEO',
           tagline: '10년의 창의예술교육을, AI 멘토로 옮겨 짓는 사람.',
           credits: 'KAIST · 홍익대 · 예술의전당 어린이영재아카데미',
@@ -1052,7 +1052,7 @@ const translations = {
       desc2: 'Built and reviewed by graduates of Seoul Nat\'l Univ · KAIST · Art School · UC Berkeley',
       team: [
         {
-          name: 'Jieon Du',
+          name: 'Journey',
           role: 'CEO',
           tagline: 'Translating ten years of creative-arts education into an AI mentor.',
           credits: "KAIST · Hongik · Seoul Arts Center Children's Academy",

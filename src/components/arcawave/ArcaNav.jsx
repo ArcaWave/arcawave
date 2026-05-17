@@ -92,7 +92,11 @@ const ArcaNav = () => {
                     animate={{ opacity: 1, y: 0 }}
                     exit={{ opacity: 0, y: 6 }}
                     transition={{ duration: 0.15 }}
-                    className="absolute left-1/2 -translate-x-1/2 top-full pt-3 w-[300px]"
+                    // Framer Motion drives `transform` for the y animation, so we can't
+                    // also use Tailwind's `-translate-x-1/2` (it would get clobbered).
+                    // Center horizontally via left:50% + negative margin-left of half the panel width.
+                    className="absolute top-full pt-3 w-[300px]"
+                    style={{ left: '50%', marginLeft: -150 }}
                   >
                     <div
                       role="menu"
@@ -105,10 +109,11 @@ const ArcaNav = () => {
                           target={item.external ? '_blank' : undefined}
                           rel={item.external ? 'noopener noreferrer' : undefined}
                           role="menuitem"
-                          className="group grid grid-cols-[40px_1fr] items-center gap-3 p-3 rounded-xl hover:bg-card-sub transition-colors"
+                          className="group grid grid-cols-[36px_minmax(0,1fr)] gap-x-3 gap-y-1 p-3 rounded-xl hover:bg-card-sub transition-colors"
                         >
+                          {/* Col 1 / Row 1: badge */}
                           <div
-                            className="w-10 h-10 rounded-xl flex items-center justify-center"
+                            className="w-9 h-9 rounded-[10px] flex items-center justify-center self-center"
                             style={{
                               background:
                                 'linear-gradient(135deg, #7C3AED 0%, #F472B6 100%)',
@@ -118,31 +123,31 @@ const ArcaNav = () => {
                               M
                             </span>
                           </div>
-                          <div className="min-w-0">
-                            <div className="flex items-center gap-1.5 leading-tight">
-                              <span className="text-sm font-bold text-foreground">
-                                {item.name}
-                              </span>
-                              {item.external && (
-                                <svg
-                                  width="11"
-                                  height="11"
-                                  viewBox="0 0 24 24"
-                                  fill="none"
-                                  stroke="currentColor"
-                                  strokeWidth="2.5"
-                                  strokeLinecap="round"
-                                  strokeLinejoin="round"
-                                  className="text-foreground/40 group-hover:text-foreground/70 transition-colors flex-shrink-0"
-                                >
-                                  <path d="M7 7h10v10" />
-                                  <path d="M7 17 17 7" />
-                                </svg>
-                              )}
-                            </div>
-                            <div className="text-xs text-body-text leading-snug mt-1">
-                              {item.sub}
-                            </div>
+                          {/* Col 2 / Row 1: title (vertically centered in the badge row) */}
+                          <div className="self-center flex items-center gap-1.5 min-w-0">
+                            <span className="text-sm font-bold text-foreground">
+                              {item.name}
+                            </span>
+                            {item.external && (
+                              <svg
+                                width="11"
+                                height="11"
+                                viewBox="0 0 24 24"
+                                fill="none"
+                                stroke="currentColor"
+                                strokeWidth="2.5"
+                                strokeLinecap="round"
+                                strokeLinejoin="round"
+                                className="text-foreground/40 group-hover:text-foreground/70 transition-colors flex-shrink-0"
+                              >
+                                <path d="M7 7h10v10" />
+                                <path d="M7 17 17 7" />
+                              </svg>
+                            )}
+                          </div>
+                          {/* Col 2 / Row 2: subtitle — automatically aligned with title via shared grid column */}
+                          <div className="col-start-2 text-xs text-body-text leading-snug">
+                            {item.sub}
                           </div>
                         </a>
                       ))}
