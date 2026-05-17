@@ -1,5 +1,206 @@
 const translations = {
   ko: {
+    // Arcawave brand page
+    arca: {
+      nav: {
+        about: 'About us',
+        product: 'Products',
+        news: 'News',
+        cta: 'Contact us',
+        productItems: [
+          {
+            name: 'Mongle Kids',
+            sub: '5~9세를 위한 AI 창의 멘토',
+            href: 'https://monglekids.com',
+            external: true,
+          },
+        ],
+      },
+      hero: {
+        title1: '환경이 사람을 만들고,',
+        title2: '우리는 환경을 만듭니다.',
+        subtitle: 'AI로 짓는, 나에게 꼭 맞는 성장 환경.',
+        cta: 'Mongle Kids 보기',
+      },
+      philosophy: {
+        eyebrow: 'Our Belief',
+        title1: '환경이 다르면,',
+        title2: '사람이 달라진다.',
+        body1: '곁에 누가 있었는지, 어떤 어른의 시선을 받았는지, 어떤 질문을 마주했는지— 결국 사람은 자기 환경의 모양을 하게 된다.',
+        body2: '그리고 그 환경의 차이가, 사람과 사람의 차이가 된다.',
+      },
+      gap: {
+        eyebrow: 'The Gap',
+        title: '좋은 성장 환경은,\n모두에게 공평하지 않습니다.',
+        body: '지역, 경제력, 부모가 곁에 있어줄 수 있는 시간, 학교, 만나게 되는 네트워크, 그리고 타이밍— 이 모든 것의 차이가 한 사람의 성장 곡선을 결정합니다. 우리는 이 격차를 AI로 좁히려 합니다.',
+        items: ['지역', '경제력', '부모의 시간', '학교', '네트워크', '타이밍'],
+      },
+      approach: {
+        eyebrow: 'Our Approach',
+        title1: '답을 알려주는 AI가 아니라,',
+        title2: '곁에 머무는 AI 멘토입니다.',
+        intro: '답을 빨리 알려주는 AI는 사람을 더 수동적으로 만듭니다. 우리가 만드는 AI는 다릅니다. 사용자를 기억하고, 질문을 던지고, 사고를 확장시키고, 창작을 함께합니다.',
+        pillars: [
+          {
+            num: '01',
+            tag: 'Memory',
+            title: '사용자를 기억합니다',
+            body: '어제의 대화, 지난주의 호기심, 한 달간의 작은 성장을 기억합니다. AI가 매번 처음 보는 사람처럼 굴지 않을 때, 비로소 멘토가 됩니다.',
+          },
+          {
+            num: '02',
+            tag: 'Question',
+            title: '좋은 질문을 던집니다',
+            body: '답을 주기 전에, 더 깊이 생각할 수 있는 질문을 먼저 건넵니다. 좋은 질문은 답보다 오래 남습니다.',
+          },
+          {
+            num: '03',
+            tag: 'Expansion',
+            title: '생각을 확장시킵니다',
+            body: '한 가지 관점에 갇히지 않도록, 새로운 시선과 연결되는 맥락을 보여줍니다. 호기심이 다른 호기심으로 이어지게 합니다.',
+          },
+          {
+            num: '04',
+            tag: 'Creation',
+            title: '창작을 함께합니다',
+            body: '소비가 아닌 표현, 정답이 아닌 시도. 사용자가 직접 만들고, 말하고, 그리는 모든 순간을 동행합니다.',
+          },
+        ],
+      },
+      firstStep: {
+        eyebrow: 'Our First Step',
+        title1: '첫 번째 시작점은,',
+        title2: '5~9세 아이들과 함께합니다.',
+        productName: 'Mongle Kids',
+        productNameKo: '몽글키즈',
+        productDesc: '몽글키즈는 아이들이 수동적으로 콘텐츠를 소비하는 대신, 스스로 생각하고, 표현하고, 이야기하고, 창작하도록 돕는 AI 창의 멘토입니다.',
+        whyKidsTitle: '왜 아이들과 먼저 시작했나요?',
+        whyKids: [
+          {
+            title: '가장 결정적인 시기',
+            body: '이 시기에 만난 자극과 질문이, 평생 사고하는 방식의 뼈대를 만듭니다.',
+          },
+          {
+            title: '격차가 가장 크게 벌어지는 시기',
+            body: '어떤 가정에서 자라느냐에 따라 노출되는 환경의 차이가 가장 크게 벌어지는 시기입니다.',
+          },
+          {
+            title: '한 마디가 가장 깊게 남는 시기',
+            body: '곁에 있는 누군가의 한 마디가, 평생의 호기심과 자기 신뢰의 방향을 결정할 수 있습니다.',
+          },
+        ],
+        note: '몽글키즈는 우리의 목적지가 아니라, 가장 먼저 닿고 싶었던 사람들입니다.',
+      },
+      future: {
+        eyebrow: "What's Next",
+        title1: '몽글키즈는',
+        title2: '시작점일 뿐입니다.',
+        intro: '우리는 AI 멘토가 앱 안에 머무르지 않고, 사람의 일상 속 모든 형태와 결합되기를 원합니다. 책상 위의 작은 로봇, 손에 잡히는 교구, 거실의 디지털 장난감, XR 너머의 공간— AI가 환경이 될 때, 성장은 비로소 일상이 됩니다.',
+        forms: [
+          { tag: '01', label: 'Smart Toys', desc: '디지털 장난감' },
+          { tag: '02', label: 'Connected Tools', desc: '연결된 교구' },
+          { tag: '03', label: 'Companion Robots', desc: '작은 로봇' },
+          { tag: '04', label: 'XR Experiences', desc: 'XR 경험' },
+          { tag: '05', label: 'Physical Spaces', desc: '실제 공간' },
+        ],
+      },
+      manifesto: {
+        eyebrow: 'Our Manifesto',
+        title: 'AI가 어떤 "기능"인가가 아니라,\nAI가 어떤 "환경"이 되는가.',
+        body: '우리는 AI가 사람을 더 수동적으로 만드는 도구가 아니라, 사람의 사고력, 창의성, 자기표현, 그리고 성장 가능성을 확장시키는 개인화된 성장 환경이 되어야 한다고 믿습니다.',
+        sign: 'Arcawave가 만드는 것은 AI 기능이 아니라, AI 환경입니다.',
+      },
+      news: {
+        eyebrow: 'News & Notes',
+        title: '우리가 쓴 글,\n그리고 우리가 주목한 이야기',
+        subtitle: 'Arcawave의 뉴스레터와 우리가 만들어가는 흐름을 보여주는 기사들.',
+        viewAll: '모두 보기',
+        prev: '이전',
+        next: '다음',
+        items: [
+          {
+            type: 'Newsletter',
+            tag: 'Newsletter #03',
+            title: '왜 우리는 다섯 살부터 시작했을까',
+            excerpt: '결정적인 시기, 가장 큰 격차, 그리고 한 마디의 무게에 대하여.',
+            date: '2026.04.22',
+            href: '#',
+            accent: 'purple',
+          },
+          {
+            type: 'Press',
+            tag: '매일경제',
+            title: '“AI는 답이 아니라 환경이 되어야 한다” — Arcawave의 시도',
+            excerpt: '교육 앱이 아닌 “성장 환경”을 만들고자 하는 한국 스타트업의 접근.',
+            date: '2026.04.10',
+            href: '#',
+            accent: 'orange',
+          },
+          {
+            type: 'Newsletter',
+            tag: 'Newsletter #02',
+            title: 'AI가 답이 아니라 질문을 던질 때',
+            excerpt: '좋은 질문은 답보다 오래 남는다. 우리가 AI 멘토를 설계하는 첫 원칙.',
+            date: '2026.03.28',
+            href: '#',
+            accent: 'pink',
+          },
+          {
+            type: 'Press',
+            tag: 'TechCrunch',
+            title: 'Arcawave raises seed round for AI mentor concept',
+            excerpt: 'A team from KAIST, Berkeley and Seoul Nat\'l Univ. on personalized growth environments.',
+            date: '2026.03.05',
+            href: '#',
+            accent: 'green',
+          },
+          {
+            type: 'Newsletter',
+            tag: 'Newsletter #01',
+            title: '성장 환경의 격차에 대하여',
+            excerpt: '지역, 경제력, 부모의 시간— 우리가 AI로 좁히려는 격차의 풍경.',
+            date: '2026.02.14',
+            href: '#',
+            accent: 'purple',
+          },
+        ],
+      },
+      team: {
+        eyebrow: 'Our Team',
+        title: 'Arcawave를 만드는 사람들',
+        subtitle: '교육, 기술, 디자인— 서로 다른 세계를 잇는 작은 팀이 만들고 있습니다.',
+        advisorTitle: '함께 만들어가는 자문단',
+        advisorTags: ['유아교육학 교수', '아동미술치료사', 'STEAM 교육과정 전문가', '아동발달심리 전문가'],
+        advisorNote: '모든 콘텐츠와 인터랙션은 전문가 감수를 거칩니다',
+      },
+      contact: {
+        eyebrow: 'Get in Touch',
+        title1: '함께 성장 환경을',
+        title2: '만들어 갑시다.',
+        body: '우리의 비전에 공감하시거나, 같이 만들고 싶으시거나, 그냥 이야기를 나누고 싶으시다면.\n언제든 편하게 연락 주세요.',
+        email: 'hello@arcawave.xyz',
+        ctaPrimary: '이메일 보내기',
+        ctaSecondary: '몽글키즈 보기',
+      },
+      footer: {
+        tagline: '+1 mentor by your side, with AI.',
+        sections: [
+          {
+            title: 'Arcawave',
+            links: ['Philosophy', 'Approach', 'Manifesto'],
+          },
+          {
+            title: 'Product',
+            links: ['Mongle Kids', 'Roadmap', 'Research'],
+          },
+          {
+            title: 'Company',
+            links: ['Team', 'Careers', 'Contact'],
+          },
+        ],
+        copyright: '© 2026 Arcawave Inc. All rights reserved.',
+      },
+    },
     // Navigation
     nav: {
       features: 'Features',
@@ -265,6 +466,8 @@ const translations = {
         {
           name: '두지언',
           role: 'CEO',
+          tagline: '10년의 창의예술교육을, AI 멘토로 옮겨 짓는 사람.',
+          credits: 'KAIST · 홍익대 · 예술의전당 어린이영재아카데미',
           school: 'KAIST 메타버스대학원 박사 Candidate\nKAIST 문화기술대학원 석사\n홍익대 미술대학 회화 / 예술학 학사',
           highlights: ['문화예술교육사 / 학예사 자격 보유', '예술의전당 어린이영재아카데미 교육 프로그램', 'Art-Tech 실감형 XR Heritage Tourism PM', '박물관 및 미술관 교육 프로그램 기획'],
           paper: '유아/초등 창의예술교육 10년 경력',
@@ -272,6 +475,8 @@ const translations = {
         {
           name: 'Josh Jang',
           role: 'CTO',
+          tagline: '사람과 AI 사이의 인터랙션을, 손에 잡히게 만드는 사람.',
+          credits: 'UC Berkeley · Snap AR · MIT Reality Hack',
           school: 'UC Berkeley 디자인공학 석사',
           highlights: ['Lawrence Lab Computer Vision for Children 전시 프로젝트 디자인 & 개발', 'MIT Reality Hack Qualcomm 트랙 수상', 'Snap Spectacle AR Glass Co-op 프로젝트 인터랙션 개발자'],
           paper: 'Human-AI Interaction 기반 아동 교육 시스템 설계 & 개발',
@@ -279,6 +484,8 @@ const translations = {
         {
           name: '최윤서',
           role: 'CPO',
+          tagline: '"쓰기 편한 것"은 곧 "오래 함께 자라는 것"이라고 믿는 사람.',
+          credits: 'SNU HCI · CES 2026 · 카카오임팩트',
           school: '서울대학교 정보문화(HCI)/언어/심리 학사과정',
           highlights: ['서울대학교 CES 2026 Silicon Valley 창업 PJ 1위', '카카오임팩트 테크포임팩트 PJ 혁신기술상(1위)', "HCI 중심 '쓰기 좋은' 서비스 만드는 UX/UI 디자이너", '인천국제고 인문영재교육원 수료'],
           paper: '대치동 고입/대입 컨설팅 및 초중등 멘토링 다수',
@@ -381,6 +588,207 @@ const translations = {
     },
   },
   en: {
+    // Arcawave brand page
+    arca: {
+      nav: {
+        about: 'About us',
+        product: 'Products',
+        news: 'News',
+        cta: 'Contact us',
+        productItems: [
+          {
+            name: 'Mongle Kids',
+            sub: 'An AI creative mentor for ages 5–9',
+            href: 'https://monglekids.com',
+            external: true,
+          },
+        ],
+      },
+      hero: {
+        title1: 'Environments make people.',
+        title2: 'We make environments.',
+        subtitle: 'Personalized growth environments, built with AI.',
+        cta: 'See Mongle Kids',
+      },
+      philosophy: {
+        eyebrow: 'Our Belief',
+        title1: 'A different environment',
+        title2: 'makes a different person.',
+        body1: 'Who stood beside you, whose eyes saw you, what questions you faced — in the end, we take the shape of the place we grew up in.',
+        body2: 'And the difference between environments becomes the difference between people.',
+      },
+      gap: {
+        eyebrow: 'The Gap',
+        title: 'A good environment\nis not given equally.',
+        body: 'Region, household income, the hours a parent can spend, the school you happen to attend, the network you happen to enter, and timing — these decide the slope of a person\'s growth curve more than talent does. We are trying to close that gap with AI.',
+        items: ['Region', 'Income', "Parents' time", 'School', 'Network', 'Timing'],
+      },
+      approach: {
+        eyebrow: 'Our Approach',
+        title1: 'Not an AI that hands you answers,',
+        title2: 'an AI mentor that stays by your side.',
+        intro: 'AI that rushes to give answers makes people more passive. Ours is different. It remembers you, asks better questions, expands your thinking, and stays beside you while you create.',
+        pillars: [
+          {
+            num: '01',
+            tag: 'Memory',
+            title: 'It remembers you',
+            body: "Yesterday's conversation, last week's curiosity, a month of small growth. An AI only becomes a mentor when it stops treating you like a stranger every time.",
+          },
+          {
+            num: '02',
+            tag: 'Question',
+            title: 'It asks good questions',
+            body: 'Before handing over an answer, it offers a question worth thinking through. Good questions outlast the answers they invite.',
+          },
+          {
+            num: '03',
+            tag: 'Expansion',
+            title: 'It expands your thinking',
+            body: 'It nudges you out of a single viewpoint and connects what you noticed to a wider context. Curiosity branches into more curiosity.',
+          },
+          {
+            num: '04',
+            tag: 'Creation',
+            title: 'It creates with you',
+            body: 'Not consumption but expression. Not correctness but the attempt. It walks alongside every moment you make, speak, and draw.',
+          },
+        ],
+      },
+      firstStep: {
+        eyebrow: 'Our First Step',
+        title1: 'We start',
+        title2: 'with children aged 5 to 9.',
+        productName: 'Mongle Kids',
+        productNameKo: '몽글키즈',
+        productDesc: 'Mongle Kids is an AI creative mentor that helps children think, express, narrate, and create — instead of passively consuming content.',
+        whyKidsTitle: 'Why begin with children?',
+        whyKids: [
+          {
+            title: 'The most formative window',
+            body: 'The questions and stimulus encountered at this age build the skeleton of how a person thinks for life.',
+          },
+          {
+            title: 'Where the gap opens widest',
+            body: 'The household a child is born into creates the largest differences in environment at this age.',
+          },
+          {
+            title: 'Where one sentence sinks deepest',
+            body: "A single phrase from someone nearby can shape a child's curiosity and self-trust for decades.",
+          },
+        ],
+        note: "Mongle Kids isn't our destination — it's the people we wanted to reach first.",
+      },
+      future: {
+        eyebrow: "What's Next",
+        title1: 'Mongle Kids',
+        title2: 'is only the starting point.',
+        intro: "We want AI mentors to live beyond apps — woven into the everyday: a small robot on the desk, a tool in the hand, a digital toy in the living room, a space beyond XR. When AI becomes an environment, growth becomes daily life.",
+        forms: [
+          { tag: '01', label: 'Smart Toys', desc: 'Playful, connected companions' },
+          { tag: '02', label: 'Connected Tools', desc: 'Tangible learning props' },
+          { tag: '03', label: 'Companion Robots', desc: 'Small robots beside you' },
+          { tag: '04', label: 'XR Experiences', desc: 'Spaces beyond the screen' },
+          { tag: '05', label: 'Physical Spaces', desc: 'Real rooms, real moments' },
+        ],
+      },
+      manifesto: {
+        eyebrow: 'Our Manifesto',
+        title: 'Not what features AI has,\nbut what kind of environment AI becomes.',
+        body: 'We believe AI should not be a tool that makes people more passive. It should be a personalized growth environment that expands how we think, create, express ourselves, and what we are capable of becoming.',
+        sign: "What Arcawave builds isn't an AI feature. It's an AI environment.",
+      },
+      news: {
+        eyebrow: 'News & Notes',
+        title: 'What we write,\nand what we read.',
+        subtitle: 'Newsletters from Arcawave and the stories shaping the world we build into.',
+        viewAll: 'View all',
+        prev: 'Previous',
+        next: 'Next',
+        items: [
+          {
+            type: 'Newsletter',
+            tag: 'Newsletter #03',
+            title: 'Why we started at age five',
+            excerpt: 'On formative windows, the widest gap, and the weight of a single sentence.',
+            date: '2026.04.22',
+            href: '#',
+            accent: 'purple',
+          },
+          {
+            type: 'Press',
+            tag: 'Maeil Business',
+            title: '“AI should be an environment, not an answer” — Arcawave\'s bet',
+            excerpt: "A Seoul-based team building growth environments, not another education app.",
+            date: '2026.04.10',
+            href: '#',
+            accent: 'orange',
+          },
+          {
+            type: 'Newsletter',
+            tag: 'Newsletter #02',
+            title: 'When AI asks instead of answers',
+            excerpt: 'A good question outlasts its answer. The first principle of our AI mentor.',
+            date: '2026.03.28',
+            href: '#',
+            accent: 'pink',
+          },
+          {
+            type: 'Press',
+            tag: 'TechCrunch',
+            title: 'Arcawave raises seed round for AI mentor concept',
+            excerpt: 'A team from KAIST, Berkeley and Seoul Nat\'l Univ. on personalized growth environments.',
+            date: '2026.03.05',
+            href: '#',
+            accent: 'green',
+          },
+          {
+            type: 'Newsletter',
+            tag: 'Newsletter #01',
+            title: 'On the unevenness of growth environments',
+            excerpt: "Region, income, a parent's time — the landscape of the gap we want to close.",
+            date: '2026.02.14',
+            href: '#',
+            accent: 'purple',
+          },
+        ],
+      },
+      team: {
+        eyebrow: 'Our Team',
+        title: 'The people behind Arcawave',
+        subtitle: 'A small team stitching together education, technology and design.',
+        advisorTitle: 'Advisory board',
+        advisorTags: ['Early Childhood Ed. Professor', 'Art Therapist', 'STEAM Curriculum Expert', 'Child Dev. Psychologist'],
+        advisorNote: 'Every piece of content and interaction is reviewed by domain experts',
+      },
+      contact: {
+        eyebrow: 'Get in Touch',
+        title1: 'Let\'s build',
+        title2: 'this environment together.',
+        body: "If our vision resonates, if you'd like to build with us, or if you just want to talk —\nplease reach out anytime.",
+        email: 'hello@arcawave.xyz',
+        ctaPrimary: 'Send an Email',
+        ctaSecondary: 'See Mongle Kids',
+      },
+      footer: {
+        tagline: '+1 mentor by your side, with AI.',
+        sections: [
+          {
+            title: 'Arcawave',
+            links: ['Philosophy', 'Approach', 'Manifesto'],
+          },
+          {
+            title: 'Product',
+            links: ['Mongle Kids', 'Roadmap', 'Research'],
+          },
+          {
+            title: 'Company',
+            links: ['Team', 'Careers', 'Contact'],
+          },
+        ],
+        copyright: '© 2026 Arcawave Inc. All rights reserved.',
+      },
+    },
     // Navigation
     nav: {
       features: 'Features',
@@ -646,6 +1054,8 @@ const translations = {
         {
           name: 'Jieon Du',
           role: 'CEO',
+          tagline: 'Translating ten years of creative-arts education into an AI mentor.',
+          credits: "KAIST · Hongik · Seoul Arts Center Children's Academy",
           school: 'KAIST Metaverse PhD Candidate\nKAIST Culture Technology MS\nHongik Univ. Fine Arts BA',
           highlights: ['Certified Cultural Arts Educator / Curator', "Seoul Arts Center Children's Academy Program", 'Art-Tech XR Heritage Tourism PM', 'Museum & Gallery Education Program Planning'],
           paper: '10 years of experience in creative arts education for young children',
@@ -653,6 +1063,8 @@ const translations = {
         {
           name: 'Josh Jang',
           role: 'CTO',
+          tagline: 'Building the interaction between humans and AI — close enough to touch.',
+          credits: 'UC Berkeley · Snap AR · MIT Reality Hack',
           school: 'UC Berkeley Design Engineering MS',
           highlights: ['Lawrence Lab Computer Vision for Children Exhibition Design & Dev', 'MIT Reality Hack Qualcomm Track Winner', 'Snap Spectacle AR Glass Co-op Interaction Developer'],
           paper: 'Human-AI Interaction based children\'s education system design & development',
@@ -660,6 +1072,8 @@ const translations = {
         {
           name: 'Yunseo Choi',
           role: 'CPO',
+          tagline: '“Easy to use” is how something grows with you.',
+          credits: 'SNU HCI · CES 2026 · Kakao Impact',
           school: 'Seoul National Univ. HCI / Linguistics / Psychology',
           highlights: ['SNU CES 2026 Silicon Valley Startup PJ 1st Place', 'Kakao Impact Tech4Impact PJ Innovation Award (1st)', "HCI-centered UX/UI Designer building 'easy-to-use' services", 'Incheon Int\'l HS Humanities Gifted Program'],
           paper: 'Extensive tutoring & mentoring for K-12 students',

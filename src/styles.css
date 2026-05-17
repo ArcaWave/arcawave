@@ -2,35 +2,68 @@
 @tailwind components;
 @tailwind utilities;
 
-/* ─── Design Tokens ─── */
+/* ─── Arcawave Design System ───────────────────────────────────────
+ * Concept:  Quiet container, loud idea.
+ *           The page is a calm, paper-like environment.
+ *           The ideas inside are confident and direct.
+ *
+ * Mood:     Editorial sophistication × calm tech.
+ *           Reading-room calm. Mature, not flashy.
+ *           One accent gesture per section, never decoration for decoration's sake.
+ *
+ * System:   - Ink + Paper base, with a single brand gradient as the sole accent.
+ *           - Type-driven layouts. Whitespace as a first-class element.
+ *           - Motion is gentle: appearance, drift, never demanding.
+ * ────────────────────────────────────────────────────────────────── */
 :root {
     /* Font families */
     --font-display: 'Montserrat', system-ui, sans-serif;
     --font-body: 'Pretendard', -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', sans-serif;
+    --font-mono: 'IBM Plex Sans', ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
 
-    /* Colors - Brand */
+    /* ─── Paper & Ink ─── */
+    --paper: #FBF7F0;          /* warm cream — the page itself */
+    --paper-soft: #F5EFE4;     /* a touch warmer for hover states */
+    --paper-tint: #F0E9DB;     /* edge tints for cards */
+    --ink: #1E1B4B;            /* primary text, anchors */
+    --ink-mute: #5C5878;       /* body / supporting text */
+    --ink-hush: #94909F;       /* captions, mono labels */
+
+    /* Backward-compatible aliases (the existing components read these) */
+    --background: var(--paper);
+    --card: #FFFFFF;
+    --card-muted: #F5F0FF;
+    --muted: #F5F0FF;
+    --foreground: var(--ink);
+    --body-text: var(--ink-mute);
+    --caption: var(--ink-hush);
+    --border: rgba(30, 27, 75, 0.10);
+    --input: rgba(30, 27, 75, 0.10);
+
+    /* ─── Brand accent (one gradient, used sparingly) ─── */
+    --grad-warm: linear-gradient(135deg, #7C3AED 0%, #F97316 60%, #F472B6 100%);
+    --grad-soft: linear-gradient(135deg, #7C3AED 0%, #F472B6 100%);
     --primary: #7C3AED;
     --primary-light: #A855F7;
     --secondary: #F97316;
     --success: #10B981;
     --pink: #F472B6;
-
-    /* Colors - Surfaces */
-    --background: #FFFBF5;
-    --card: #FFFFFF;
-    --card-muted: #F5F0FF;
-    --muted: #F5F0FF;
-
-    /* Colors - Text */
-    --foreground: #1E1B4B;
-    --body-text: #64748B;
-    --caption: #94A3B8;
-
-    /* Colors - Borders & Misc */
-    --border: #E2E8F0;
-    --input: #E2E8F0;
     --ring: #7C3AED;
-    --radius: 1.25rem;
+
+    /* ─── Spacing rhythm ─── */
+    --space-section: clamp(96px, 14vw, 160px);
+    --space-readline: 680px;       /* max width for body copy */
+    --space-container: 1240px;     /* outer container */
+
+    /* ─── Radii ─── */
+    --r-sm: 12px;
+    --r-md: 20px;
+    --r-lg: 28px;
+    --r-pill: 9999px;
+    --radius: var(--r-md);
+
+    /* ─── Motion easing ─── */
+    --ease-out-soft: cubic-bezier(0.2, 0.7, 0.2, 1);
 }
 
 /* ─── Reset ─── */
