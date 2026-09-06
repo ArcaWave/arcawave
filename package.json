@@ -2,7 +2,7 @@
   "name": "arcawave-landing",
   "version": "1.0.0",
   "type": "module",
-  "description": "Premium landing page for Arcawave - Where Art Meets Technology",
+  "description": "Arcawave company landing page — personalized AI growth environments. First product: Mongle Kids.",
   "scripts": {
     "dev": "vite",
     "build": "vite build",
@@ -10,21 +10,18 @@
   },
   "keywords": [
     "landing-page",
-    "3d",
-    "art",
-    "gallery",
-    "three.js",
-    "react"
+    "arcawave",
+    "react",
+    "vite",
+    "tailwind",
+    "framer-motion"
   ],
   "author": "",
   "license": "MIT",
   "dependencies": {
-    "@emailjs/browser": "^4.4.1",
     "framer-motion": "^11.15.0",
-    "lucide-react": "^0.564.0",
     "react": "^18.2.0",
-    "react-dom": "^18.2.0",
-    "three": "^0.160.0"
+    "react-dom": "^18.2.0"
   },
   "devDependencies": {
     "@types/react": "^18.2.43",

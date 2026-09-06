@@ -1,26 +1,26 @@
 import React from 'react'
-import { LanguageProvider } from './i18n/LanguageContext'
-import ArcaNav from './components/arcawave/ArcaNav'
-import ArcaHero from './components/arcawave/ArcaHero'
-import ArcaPhilosophy from './components/arcawave/ArcaPhilosophy'
-import ArcaNews from './components/arcawave/ArcaNews'
-import ArcaTeam from './components/arcawave/ArcaTeam'
-import ArcaContact from './components/arcawave/ArcaContact'
-import ArcaFooter from './components/arcawave/ArcaFooter'
+import Nav from './components/landing/Nav'
+import Hero from './components/landing/Hero'
+import Core from './components/landing/Core'
+import Build from './components/landing/Build'
+import Vision from './components/landing/Vision'
 
+/**
+ * Four scrolls to understand the company:
+ * 01 Hero — a space that notices a person
+ * 02 Core — See. Understand. Respond.
+ * 03 Build — Experience | Intelligence
+ * 04 Vision — one sentence, then another
+ */
 function App() {
   return (
-    <LanguageProvider>
-      <main className="relative min-h-screen bg-background overflow-x-hidden">
-        <ArcaNav />
-        <ArcaHero />
-        <ArcaPhilosophy />
-        <ArcaNews />
-        <ArcaTeam />
-        <ArcaContact />
-        <ArcaFooter />
-      </main>
-    </LanguageProvider>
+    <main className="relative bg-paper text-ink">
+      <Nav />
+      <Hero />
+      <Core />
+      <Build />
+      <Vision />
+    </main>
   )
 }
 
