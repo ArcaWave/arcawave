@@ -9,10 +9,6 @@ import React from 'react'
  * both the paper background and the full-bleed photographs. The colour logo
  * lives in its own fixed layer so the blend never inverts it.
  */
-const focusPanel = (side) => {
-  window.dispatchEvent(new CustomEvent('arcawave:focus', { detail: side }))
-}
-
 const LOGO_W = 44 // 22px tall mark at the SVG's 366:187 ratio
 
 const Nav = () => (
@@ -35,16 +31,15 @@ const Nav = () => (
       <div className="flex items-center justify-between px-6 md:px-8 py-6">
         <span aria-hidden style={{ width: LOGO_W }} />
         <nav className="flex items-center gap-6 md:gap-9 text-[13px] font-medium">
-          <a
-            href="#build"
-            onClick={() => focusPanel('experience')}
-            className="hidden sm:inline opacity-80 hover:opacity-100 transition-opacity"
-          >
+          <a href="#build" className="hidden sm:inline opacity-80 hover:opacity-100 transition-opacity">
             Work
           </a>
           <a
             href="#build"
-            onClick={() => focusPanel('intelligence')}
+            onClick={(e) => {
+              e.preventDefault()
+              window.dispatchEvent(new CustomEvent('arcawave:focus', { detail: 'intelligence' }))
+            }}
             className="hidden sm:inline opacity-80 hover:opacity-100 transition-opacity"
           >
             Technology

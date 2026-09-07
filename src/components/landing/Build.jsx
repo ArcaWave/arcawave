@@ -1,359 +1,296 @@
 import React, { useEffect, useMemo, useRef, useState } from 'react'
-import { motion } from 'framer-motion'
+import { motion, useTransform } from 'framer-motion'
+import useScrollProgress from '../../hooks/useScrollProgress'
+import Track from './Track'
 
 /**
- * Build — the two faces of the company.
+ * Build — a film strip of what we make.
  *
- * 50:50 at rest. Lean the cursor into a side and it opens to 70:30.
- * Left: real spaces, real people, real response.
- * Right: the same kind of scene, with behavior made legible — three quiet
- * markers, no dashboard.
+ * The section pins; scrolling walks along a row of large scan fragments,
+ * one centred at a time, like moving through an exhibition. Works first,
+ * then three capability frames where the same fragments carry real
+ * tracking overlays. Counter and progress bars always say how many.
+ *
+ * On phones it is a plain horizontal swipe strip.
  */
 
 // TODO: replace the stand-in photos with real project stills in public/assets/images/work/
-const PANELS = [
+const ITEMS = [
   {
-    key: 'experience',
-    eyebrow: 'Experience',
-    title: 'Spaces that respond.',
-    items: [
-      {
-        label: 'MongleKids',
-        sub: 'AI creative mentor · ages 5–9',
-        href: 'https://monglekids.com',
-        external: true,
-        works: [
-          { src: '/assets/images/work/monglekids-01.jpg', caption: '2025 · Mongle Kids · at home', pos: '60% 40%' },
-        ],
-      },
-      {
-        label: 'Pop-ups',
-        sub: 'Responsive pop-up spaces',
-        href: 'mailto:help@arcawave.xyz?subject=Pop-up%20inquiry',
-        works: [
-          { src: '/assets/images/work/popup-01.jpg', caption: '2025 · Pop-up · Seoul', pos: '50% 60%' },
-        ],
-      },
-      {
-        label: 'Exhibitions',
-        sub: 'Interactive exhibitions',
-        href: 'mailto:help@arcawave.xyz?subject=Exhibition%20inquiry',
-        works: [
-          { src: '/assets/images/work/exhibition-01.jpg', caption: '2024 · Media wall · Seoul', pos: '78% 50%' },
-        ],
-      },
-    ],
-    href: 'mailto:help@arcawave.xyz?subject=Experience%20inquiry',
-    external: false,
-    markers: [],
+    kind: 'work',
+    title: 'Mongle Kids',
+    type: 'Product',
+    caption: '2025 · Mongle Kids · at home',
+    img: '/assets/images/work/monglekids-01.jpg',
+    pos: '60% 40%',
+    href: 'https://monglekids.com',
+    external: true,
   },
   {
-    key: 'intelligence',
-    eyebrow: 'Intelligence',
-    title: 'Behavior made visible.',
-    items: [{ label: 'Computer Vision' }, { label: 'Behavior Data' }, { label: 'Personalization' }],
-    href: 'mailto:help@arcawave.xyz?subject=Intelligence%20inquiry',
-    external: false,
-    img: '/assets/images/spaces/intelligence.jpg',
-    imgPos: '50% 60%',
-    markers: [
-      { x: 13, y: 54, label: 'participation' },
-      { x: 45, y: 50, label: 'interaction' },
-      { x: 84, y: 58, label: 'movement' },
-    ],
+    kind: 'work',
+    title: 'Responsive pop-up',
+    type: 'Pop-up',
+    caption: '2025 · Pop-up · Seoul',
+    img: '/assets/images/work/popup-01.jpg',
+    pos: '50% 60%',
+    href: 'mailto:help@arcawave.xyz?subject=Pop-up%20inquiry',
+  },
+  {
+    kind: 'work',
+    title: 'Interactive media wall',
+    type: 'Exhibition',
+    caption: '2024 · Media wall · Seoul',
+    img: '/assets/images/work/exhibition-01.jpg',
+    pos: '78% 50%',
+    href: 'mailto:help@arcawave.xyz?subject=Exhibition%20inquiry',
+  },
+  {
+    kind: 'tech',
+    id: 'intelligence',
+    title: 'Computer Vision',
+    sub: 'Sees people in real spaces',
+    caption: 'computer vision · 5 tracked',
+    scene: '04-kids-cafe',
+  },
+  {
+    kind: 'tech',
+    title: 'Behavior Data',
+    sub: 'Turns movement into meaning',
+    caption: 'behavior data · playground',
+    scene: '03-playground',
+  },
+  {
+    kind: 'tech',
+    title: 'Personalization',
+    sub: 'Adapts the space to each person',
+    caption: 'personalization · classroom',
+    scene: '02-classroom-play',
   },
 ]
 
-const CYCLE_MS = 3200
-const CUT_MS = 220
-
-const basisFor = (bias, key) => {
-  if (!bias) return '50%'
-  return bias === key ? '70%' : '30%'
-}
+const GAP = 40
+const PER_ITEM_VH = 70 // scroll distance per card on desktop
 
 const Build = () => {
-  const [hover, setHover] = useState(null)
-  const [pinned, setPinned] = useState(null)
+  const ref = useRef(null)
+  const p = useScrollProgress(ref)
+  const [vw, setVw] = useState(typeof window !== 'undefined' ? window.innerWidth : 1440)
+  const [tracks, setTracks] = useState({})
+  const [active, setActive] = useState(0)
+  const desktop = vw >= 1024
+  const N = ITEMS.length
 
-  // Nav links can open a side for a moment
   useEffect(() => {
-    let timer
-    const onFocus = (e) => {
-      setPinned(e.detail)
-      clearTimeout(timer)
-      timer = setTimeout(() => setPinned(null), 2200)
-    }
-    window.addEventListener('arcawave:focus', onFocus)
+    const onResize = () => setVw(window.innerWidth)
+    window.addEventListener('resize', onResize)
+    return () => window.removeEventListener('resize', onResize)
+  }, [])
+
+  // tracking data for the capability frames
+  useEffect(() => {
+    let alive = true
+    Promise.all(
+      ITEMS.filter((i) => i.scene).map((i) =>
+        fetch(`/assets/scenes/${i.scene}/track.json`)
+          .then((r) => r.json())
+          .then((t) => [i.scene, t]),
+      ),
+    ).then((pairs) => alive && setTracks(Object.fromEntries(pairs)))
     return () => {
-      window.removeEventListener('arcawave:focus', onFocus)
-      clearTimeout(timer)
+      alive = false
     }
   }, [])
 
-  const bias = hover || pinned
+  // card geometry
+  const cardW = desktop ? Math.min(760, vw * 0.54) : Math.round(vw * 0.84)
+  const step = cardW + GAP
+  const x = useTransform(p, (v) => -v * (N - 1) * step)
 
+  useEffect(() => {
+    const unsub = p.on('change', (v) => setActive(Math.round(v * (N - 1))))
+    return unsub
+  }, [p, N])
+
+  // nav: "Technology" jumps to the first capability frame
+  useEffect(() => {
+    const onFocus = (e) => {
+      const el = ref.current
+      if (!el || e.detail !== 'intelligence') return
+      const i = ITEMS.findIndex((it) => it.kind === 'tech')
+      const travel = el.offsetHeight - window.innerHeight
+      const top = el.offsetTop + (travel * i) / (N - 1)
+      window.scrollTo({ top, behavior: 'smooth' })
+    }
+    window.addEventListener('arcawave:focus', onFocus)
+    return () => window.removeEventListener('arcawave:focus', onFocus)
+  }, [N])
+
+  const current = ITEMS[active]
+
+  // ---- phones: plain swipe strip ----
+  if (!desktop) {
+    return (
+      <section id="build" className="relative bg-paper py-[14vh]">
+        <div className="px-6 flex items-baseline justify-between mb-8">
+          <p className="mono-caps" style={{ color: 'var(--ink-3)' }}>
+            What we build
+          </p>
+          <p className="mono" style={{ color: 'var(--ink-3)' }}>
+            {N} frames
+          </p>
+        </div>
+        <div className="flex gap-5 overflow-x-auto px-6 pb-4 snap-x snap-mandatory" style={{ scrollbarWidth: 'none' }}>
+          {ITEMS.map((it, i) => (
+            <div key={it.title} className="snap-center shrink-0" style={{ width: cardW }}>
+              <Card item={it} i={i} width={cardW} track={it.scene ? tracks[it.scene] : null} active />
+            </div>
+          ))}
+        </div>
+      </section>
+    )
+  }
+
+  // ---- desktop: pinned, scroll-driven ----
   return (
-    <section id="build" className="relative flex flex-col md:flex-row md:h-screen md:min-h-[640px]">
-      {PANELS.map((panel) => (
-        <Panel
-          key={panel.key}
-          panel={panel}
-          open={bias === panel.key}
-          basis={basisFor(bias, panel.key)}
-          onEnter={() => setHover(panel.key)}
-          onLeave={() => setHover(null)}
-        />
-      ))}
+    <section id="build" ref={ref} className="relative bg-paper" style={{ height: `${100 + PER_ITEM_VH * (N - 1)}vh` }}>
+      <div className="sticky top-0 h-screen overflow-hidden">
+        {/* header */}
+        <div className="absolute top-[12vh] left-8 right-8 flex items-baseline justify-between">
+          <p className="mono-caps" style={{ color: 'var(--ink-3)' }}>
+            What we build
+          </p>
+          <p className="mono" style={{ color: 'var(--ink-3)' }}>
+            <span style={{ color: 'var(--ink)' }}>{String(active + 1).padStart(2, '0')}</span> / {String(N).padStart(2, '0')}
+          </p>
+        </div>
+
+        {/* strip */}
+        <motion.div
+          className="absolute top-1/2 left-0 flex items-start"
+          style={{ x, gap: GAP, paddingLeft: (vw - cardW) / 2, y: '-54%' }}
+        >
+          {ITEMS.map((it, i) => (
+            <Card
+              key={it.title}
+              item={it}
+              i={i}
+              width={cardW}
+              track={it.scene ? tracks[it.scene] : null}
+              active={i === active}
+            />
+          ))}
+        </motion.div>
+
+        {/* footer: progress + cue + link */}
+        <div className="absolute bottom-[7vh] left-8 right-8 flex items-end justify-between">
+          <div>
+            <p className="mono mb-3" style={{ color: 'var(--ink-3)' }}>
+              {current.kind === 'tech' ? 'capabilities' : 'work'} · scroll to move along →
+            </p>
+            <div className="flex gap-1.5">
+              {ITEMS.map((it, i) => (
+                <span
+                  key={it.title}
+                  className="block h-[2px] transition-colors duration-300"
+                  style={{ width: 28, background: i === active ? 'var(--ink)' : 'rgba(15,15,15,0.18)' }}
+                />
+              ))}
+            </div>
+          </div>
+          <a
+            href="mailto:help@arcawave.xyz?subject=Project%20inquiry"
+            className="group text-[13px] font-medium inline-flex items-center gap-2 hover:opacity-70 transition-opacity"
+          >
+            Start a project
+            <span aria-hidden className="inline-block transition-transform duration-500 ease-out-expo group-hover:translate-x-1">
+              →
+            </span>
+          </a>
+        </div>
+      </div>
     </section>
   )
 }
 
-const Panel = ({ panel, open, basis, onEnter, onLeave }) => {
-  const imgRef = useRef(null)
-
-  // flatten the rows' works into one reel; remember which row each belongs to
-  const reel = useMemo(
-    () =>
-      (panel.items || []).flatMap((item, row) => (item.works || []).map((w) => ({ ...w, row }))),
-    [panel],
-  )
-  const hasReel = reel.length > 0
-  const [active, setActive] = useState(0)
-  const [cut, setCut] = useState(false)
-  const [rowHover, setRowHover] = useState(null)
-  const cutTimer = useRef(null)
-
-  const goTo = (i) => {
-    if (i === active) return
-    clearTimeout(cutTimer.current)
-    setCut(true)
-    setActive(i)
-    cutTimer.current = setTimeout(() => setCut(false), CUT_MS)
-  }
-
-  // auto-cycle when no row is being pointed at
+/** One frame of the strip: a torn fragment + caption + title. */
+const Card = ({ item, i, width, track, active }) => {
+  const mask = `url(/assets/masks/torn-${(i % 3) + 1}.png)`
+  const isTech = item.kind === 'tech'
+  const base = item.scene ? `/assets/scenes/${item.scene}` : null
+  const stageRef = useRef(null)
+  const [k, setK] = useState(2)
   useEffect(() => {
-    if (!hasReel || rowHover != null) return
-    const t = setInterval(() => {
-      setActive((i) => {
-        const n = (i + 1) % reel.length
-        setCut(true)
-        clearTimeout(cutTimer.current)
-        cutTimer.current = setTimeout(() => setCut(false), CUT_MS)
-        return n
-      })
-    }, CYCLE_MS)
-    return () => clearInterval(t)
-  }, [hasReel, rowHover, reel.length])
+    if (!track || !stageRef.current) return
+    const el = stageRef.current
+    const measure = () => setK(track.width / Math.max(1, el.clientWidth))
+    measure()
+    const ro = new ResizeObserver(measure)
+    ro.observe(el)
+    return () => ro.disconnect()
+  }, [track])
 
-  // preload the reel
-  useEffect(() => {
-    reel.forEach((w) => {
-      const im = new Image()
-      im.src = w.src
-    })
-  }, [reel])
-
-  const current = hasReel ? reel[active] : null
-  const bgSrc = current ? current.src : panel.img
-  const bgPos = current ? current.pos : panel.imgPos
-  const years = useMemo(() => {
-    const ys = reel.map((w) => parseInt(w.caption, 10)).filter(Boolean)
-    if (!ys.length) return ''
-    const a = Math.min(...ys)
-    const b = Math.max(...ys)
-    return a === b ? `${a}` : `${a}–${b}`
-  }, [reel])
-
-  const onMove = (e) => {
-    const el = imgRef.current
-    if (!el) return
-    const r = e.currentTarget.getBoundingClientRect()
-    const dx = (e.clientX - r.left) / r.width - 0.5
-    const dy = (e.clientY - r.top) / r.height - 0.5
-    el.style.transform = `translate(${(-dx * 14).toFixed(1)}px, ${(-dy * 10).toFixed(1)}px) scale(${
-      open ? 1.06 : 1.03
-    })`
-  }
-  const onLeaveAll = () => {
-    if (imgRef.current) imgRef.current.style.transform = 'translate(0,0) scale(1.03)'
-    setRowHover(null)
-    onLeave()
-  }
+  const Wrap = item.href ? 'a' : 'div'
 
   return (
-    <div
-      onMouseEnter={onEnter}
-      onMouseLeave={onLeaveAll}
-      onMouseMove={onMove}
-      className="relative block overflow-hidden text-white min-h-[62vh] md:min-h-0 md:h-full transition-[flex-basis] duration-700 ease-out-expo"
-      style={{ flexBasis: basis, flexGrow: 0, flexShrink: 0 }}
+    <Wrap
+      href={item.href}
+      target={item.external ? '_blank' : undefined}
+      rel={item.external ? 'noopener noreferrer' : undefined}
+      className="block shrink-0 transition-[opacity,transform] duration-700 ease-out-expo"
+      style={{ width, opacity: active ? 1 : 0.4, transform: active ? 'scale(1)' : 'scale(0.96)' }}
     >
-      {/* scene */}
-      <img
-        ref={imgRef}
-        src={bgSrc}
-        alt=""
-        className={`absolute inset-0 w-full h-full object-cover will-change-transform transition-transform duration-700 ease-out-expo ${cut ? 'work-cut' : ''}`}
-        style={{ objectPosition: bgPos, transform: 'scale(1.03)' }}
-      />
-      {/* the cut: a beat of accent + sliced offsets, same vocabulary as the hero */}
-      {cut && (
-        <>
-          <div className="absolute inset-0 work-flash" />
-          {[0, 1, 2].map((i) => (
-            <img
-              key={i}
-              src={bgSrc}
-              alt=""
-              className={`absolute inset-0 w-full h-full object-cover scan-slice scan-slice-${i}`}
-              style={{ objectPosition: bgPos, clipPath: `inset(${i * 33.4}% 0 ${(2 - i) * 33.3}% 0)` }}
-            />
-          ))}
-        </>
-      )}
       <div
-        className="absolute inset-0 transition-opacity duration-700"
-        style={{ background: 'rgba(8,8,10,1)', opacity: open ? 0.22 : 0.42 }}
-      />
-      <div
-        className="absolute inset-x-0 bottom-0"
+        ref={stageRef}
+        className="relative w-full overflow-hidden"
         style={{
-          height: '58%',
-          background: 'linear-gradient(to top, rgba(8,8,10,0.72) 0%, rgba(8,8,10,0) 100%)',
+          aspectRatio: '36 / 23',
+          WebkitMaskImage: mask,
+          maskImage: mask,
+          WebkitMaskSize: '100% 100%',
+          maskSize: '100% 100%',
         }}
-      />
-
-      {/* work caption — top-left, like the hero's scene caption */}
-      {current && (
-        <div
-          key={active}
-          className="mono work-caption absolute left-6 md:left-10 top-24 md:top-28 flex items-center gap-3"
-          style={{ color: 'rgba(255,255,255,0.75)' }}
-        >
-          <span style={{ color: 'rgba(255,255,255,0.45)' }}>
-            {String(active + 1).padStart(2, '0')} / {String(reel.length).padStart(2, '0')}
-          </span>
-          <span>{current.caption}</span>
-        </div>
-      )}
-
-      {/* behavior markers (Intelligence only) — hidden while the panel is squeezed */}
-      {panel.markers.map((m, i) => (
-        <motion.div
-          key={m.label}
-          className="absolute mono flex items-center gap-2 transition-opacity duration-500"
-          style={{
-            left: `${m.x}%`,
-            top: `${m.y}%`,
-            color: 'rgba(255,255,255,0.85)',
-            visibility: basis === '30%' ? 'hidden' : 'visible',
-          }}
-          animate={{ opacity: [0.15, 1, 1, 0.15] }}
-          transition={{ duration: 5, times: [0, 0.2, 0.7, 1], repeat: Infinity, delay: i * 1.6, ease: 'easeInOut' }}
-        >
-          <span className="block rounded-full" style={{ width: 6, height: 6, background: 'var(--accent)' }} />
-          <span style={{ width: 22, height: 1, background: 'rgba(255,255,255,0.45)' }} />
-          <span>{m.label}</span>
-        </motion.div>
-      ))}
-
-      {/* copy */}
-      <div className="relative min-h-[62vh] md:min-h-0 md:h-full flex flex-col justify-end p-6 pt-24 md:p-10">
-        <p className="mono-caps" style={{ color: 'rgba(255,255,255,0.7)' }}>
-          {panel.eyebrow}
-        </p>
-        <h2 className="display mt-4" style={{ fontSize: 'clamp(30px, 3.6vw, 52px)', letterSpacing: '-0.025em' }}>
-          {panel.title}
-        </h2>
-        {hasReel && (
-          <p className="mono mt-3" style={{ color: 'rgba(255,255,255,0.55)' }}>
-            {reel.length} {reel.length === 1 ? 'project' : 'projects'}
-            {years ? ` · ${years}` : ''}
-          </p>
+      >
+        {isTech ? (
+          <>
+            <img src={`${base}/chunk.webp`} alt="" className="absolute inset-0 w-full h-full object-cover" style={{ filter: 'grayscale(1) brightness(0.55) contrast(1.1)' }} draggable={false} />
+            <img src={`${base}/people.webp`} alt="" className="absolute inset-0 w-full h-full object-cover" style={{ filter: 'grayscale(0.6) brightness(0.8)' }} draggable={false} />
+            {track && (
+              <svg className="absolute inset-0 w-full h-full overflow-visible" viewBox={`0 0 ${track.width} ${track.height}`}>
+                {track.people.map((q) => (
+                  <Track key={q.id} p={q} W={track.width} H={track.height} k={k} animate={false} />
+                ))}
+              </svg>
+            )}
+          </>
+        ) : (
+          <img src={item.img} alt="" className="absolute inset-0 w-full h-full object-cover" style={{ objectPosition: item.pos }} draggable={false} />
         )}
-
-        <ul className="mt-8 md:mt-10 max-w-[400px]">
-          {panel.items.map((item, row) => {
-            const isRow = current && current.row === row
-            const firstOfRow = reel.findIndex((w) => w.row === row)
-            return (
-              <li
-                key={item.label}
-                className="border-t"
-                style={{ borderColor: isRow ? 'rgba(255,255,255,0.6)' : 'rgba(255,255,255,0.22)' }}
-                onMouseEnter={() => {
-                  if (firstOfRow >= 0) {
-                    setRowHover(row)
-                    goTo(firstOfRow)
-                  }
-                }}
-                onMouseLeave={() => setRowHover(null)}
-              >
-                {item.href ? (
-                  <a
-                    href={item.href}
-                    target={item.external ? '_blank' : undefined}
-                    rel={item.external ? 'noopener noreferrer' : undefined}
-                    className="group/row flex items-baseline justify-between gap-6 py-3 transition-opacity hover:opacity-100"
-                    style={{ color: isRow ? '#fff' : 'rgba(255,255,255,0.85)' }}
-                  >
-                    <span className="mono flex items-center gap-2" style={{ fontSize: 12 }}>
-                      {hasReel && (
-                        <span
-                          className="block rounded-full transition-opacity duration-300"
-                          style={{ width: 5, height: 5, background: 'var(--accent)', opacity: isRow ? 1 : 0 }}
-                        />
-                      )}
-                      {item.label}
-                    </span>
-                    <span className="flex items-baseline gap-3 min-w-0">
-                      {item.sub && (
-                        <span
-                          className="mono hidden lg:inline truncate"
-                          style={{ fontSize: 11, color: 'rgba(255,255,255,0.5)' }}
-                        >
-                          {item.sub}
-                        </span>
-                      )}
-                      <span
-                        aria-hidden
-                        className="text-[13px] transition-transform duration-500 ease-out-expo group-hover/row:translate-x-1"
-                      >
-                        {item.external ? '↗' : '→'}
-                      </span>
-                    </span>
-                  </a>
-                ) : (
-                  <span
-                    className="mono block py-3"
-                    style={{ color: 'rgba(255,255,255,0.85)', fontSize: 12 }}
-                  >
-                    {item.label}
-                  </span>
-                )}
-              </li>
-            )
-          })}
-        </ul>
-
-        <a
-          href={panel.href}
-          target={panel.external ? '_blank' : undefined}
-          rel={panel.external ? 'noopener noreferrer' : undefined}
-          className="group/cta mt-8 md:mt-10 self-start text-[13px] font-medium inline-flex items-center gap-2 hover:opacity-70 transition-opacity"
-        >
-          Explore
-          <span
-            aria-hidden
-            className="inline-block transition-transform duration-500 ease-out-expo group-hover/cta:translate-x-1"
-          >
-            →
-          </span>
-        </a>
       </div>
-    </div>
+
+      <div className="mt-4 flex items-center gap-3 pl-[3%]">
+        <span className="mono" style={{ background: 'var(--accent)', color: '#fff', padding: '4px 7px' }}>
+          {item.caption}
+        </span>
+        <span className="mono" style={{ color: 'var(--ink-3)' }}>
+          {item.type || 'Capability'}
+        </span>
+      </div>
+      <div className="mt-3 pl-[3%] flex items-baseline justify-between gap-6">
+        <span className="display" style={{ fontSize: 'clamp(22px, 2.2vw, 30px)', letterSpacing: '-0.02em' }}>
+          {item.title}
+        </span>
+        {item.sub && (
+          <span className="text-[14px] shrink-0" style={{ color: 'var(--ink-2)' }}>
+            {item.sub}
+          </span>
+        )}
+        {item.href && (
+          <span aria-hidden className="text-[14px] shrink-0">
+            {item.external ? '↗' : '→'}
+          </span>
+        )}
+      </div>
+    </Wrap>
   )
 }
 
