@@ -2,6 +2,8 @@ import React from 'react'
 
 /**
  * Nav — logo mark left, four links right.
+ * Plain words only: Work / Technology / About / Contact. The section eyebrows
+ * (Experience / Intelligence) carry the brand language once there is context.
  *
  * Text sits in a `mix-blend-mode: difference` layer so it stays legible over
  * both the paper background and the full-bleed photographs. The colour logo
@@ -38,14 +40,14 @@ const Nav = () => (
             onClick={() => focusPanel('experience')}
             className="hidden sm:inline opacity-80 hover:opacity-100 transition-opacity"
           >
-            Experience
+            Work
           </a>
           <a
             href="#build"
             onClick={() => focusPanel('intelligence')}
             className="hidden sm:inline opacity-80 hover:opacity-100 transition-opacity"
           >
-            Intelligence
+            Technology
           </a>
           <a href="#vision" className="opacity-80 hover:opacity-100 transition-opacity">
             About

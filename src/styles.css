@@ -137,3 +137,23 @@ body {
 @media (prefers-reduced-motion: reduce) {
   .scan-flash, .scan-slice, .trk-joint { animation: none; }
 }
+
+/* ─── Work reel cut (Experience panel) ───────────────────────── */
+.work-flash {
+  background: linear-gradient(115deg, #374CC1 0%, #6E6BFF 45%, #50308E 100%);
+  mix-blend-mode: screen;
+  animation: scan-flash 110ms steps(2, end) infinite;
+}
+.work-cut { filter: contrast(1.25) saturate(0.6); }
+@keyframes work-caption { 0% { opacity: 0; transform: translateY(4px); } 100% { opacity: 1; transform: none; } }
+.work-caption { animation: work-caption 240ms 120ms ease-out both; }
+
+/* partner logos: monochrome, quiet */
+.partner-logo {
+  width: auto;
+  filter: grayscale(1) contrast(1.05);
+  opacity: 0.62;
+  transition: opacity 0.3s, filter 0.3s;
+}
+.partner-logo:hover { opacity: 1; filter: grayscale(0); }
+@media (max-width: 767px) { .partner-logo { height: 72px !important; } }
