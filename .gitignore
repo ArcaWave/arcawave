@@ -35,3 +35,7 @@ lerna-debug.log*
 *.sw?
 
 .claude/
+
+# Python tooling (pose tracking pipeline)
+.venv/
+tools/*.pt

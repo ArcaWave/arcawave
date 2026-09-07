@@ -1,25 +1,24 @@
 import React from 'react'
 import { motion } from 'framer-motion'
-import HeroSpace from './HeroSpace'
+import HeroScan from './HeroScan'
 
 const ease = [0.22, 1, 0.36, 1]
 
 const Hero = () => (
   <section id="top" className="relative h-screen min-h-[640px] overflow-hidden">
-    {/* Real footage goes here: <HeroSpace videoSrc="/assets/videos/space.mp4" /> */}
-    <HeroSpace />
+    <HeroScan />
 
-    <div className="relative z-10 h-full flex flex-col justify-end px-6 md:px-8 pb-[10vh] md:pb-[12vh]">
+    <div className="relative z-10 h-full flex flex-col justify-center pt-[26vh] md:pt-0 md:justify-end px-6 md:px-8 pb-[8vh] md:pb-[9vh]">
       <motion.h1
         initial={{ opacity: 0, y: 18 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.9, delay: 0.2, ease }}
         className="display"
-        style={{ fontSize: 'clamp(40px, 6.6vw, 98px)', maxWidth: '12ch' }}
+        style={{ fontSize: 'clamp(34px, 4.5vw, 66px)', maxWidth: '22ch' }}
       >
-        We make spaces
+        We make interactions
         <br />
-        understand people.
+        intelligent.
       </motion.h1>
 
       <motion.p
@@ -29,7 +28,7 @@ const Hero = () => (
         className="ko mt-6 md:mt-8 text-[15px] md:text-[17px] leading-relaxed"
         style={{ color: 'var(--ink-2)', maxWidth: '34ch' }}
       >
-        사람의 행동을 이해하고,
+        사람의 상호작용을 이해하고,
         <br />
         공간이 반응하게 합니다.
       </motion.p>
