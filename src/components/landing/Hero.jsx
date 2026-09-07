@@ -13,25 +13,12 @@ const Hero = () => (
         initial={{ opacity: 0, y: 18 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.9, delay: 0.2, ease }}
-        className="display"
-        style={{ fontSize: 'clamp(34px, 4.5vw, 66px)', maxWidth: '22ch' }}
+        className="display md:whitespace-nowrap"
+        style={{ fontSize: 'clamp(30px, 4.4vw, 66px)' }}
       >
-        We make interactions
-        <br />
-        intelligent.
+        We make interactions intelligent.
       </motion.h1>
 
-      <motion.p
-        initial={{ opacity: 0, y: 12 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.8, delay: 0.45, ease }}
-        className="ko mt-6 md:mt-8 text-[15px] md:text-[17px] leading-relaxed"
-        style={{ color: 'var(--ink-2)', maxWidth: '34ch' }}
-      >
-        사람의 상호작용을 이해하고,
-        <br />
-        공간이 반응하게 합니다.
-      </motion.p>
     </div>
 
     <motion.a
