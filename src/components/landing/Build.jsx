@@ -11,7 +11,7 @@ import Track from './Track'
  * then three capability frames where the same fragments carry real
  * tracking overlays. Counter and progress bars always say how many.
  *
- * On phones it is a plain horizontal swipe strip.
+ * Same on phones: vertical scroll drives the strip sideways.
  */
 
 // TODO: replace the stand-in photos with real project stills in public/assets/images/work/
@@ -69,7 +69,7 @@ const ITEMS = [
 ]
 
 const GAP = 40
-const PER_ITEM_VH = 70 // scroll distance per card on desktop
+const PER_ITEM_VH = 70 // scroll distance per card
 
 const Build = () => {
   const ref = useRef(null)
@@ -102,7 +102,7 @@ const Build = () => {
   }, [])
 
   // card geometry
-  const cardW = desktop ? Math.min(760, vw * 0.54) : Math.round(vw * 0.84)
+  const cardW = desktop ? Math.min(760, vw * 0.54) : Math.round(vw * 0.82)
   const step = cardW + GAP
   const x = useTransform(p, (v) => -v * (N - 1) * step)
 
@@ -127,35 +127,12 @@ const Build = () => {
 
   const current = ITEMS[active]
 
-  // ---- phones: plain swipe strip ----
-  if (!desktop) {
-    return (
-      <section id="build" className="relative bg-paper py-[14vh]">
-        <div className="px-6 flex items-baseline justify-between mb-8">
-          <p className="mono-caps" style={{ color: 'var(--ink-3)' }}>
-            What we build
-          </p>
-          <p className="mono" style={{ color: 'var(--ink-3)' }}>
-            {N} frames
-          </p>
-        </div>
-        <div className="flex gap-5 overflow-x-auto px-6 pb-4 snap-x snap-mandatory" style={{ scrollbarWidth: 'none' }}>
-          {ITEMS.map((it, i) => (
-            <div key={it.title} className="snap-center shrink-0" style={{ width: cardW }}>
-              <Card item={it} i={i} width={cardW} track={it.scene ? tracks[it.scene] : null} active />
-            </div>
-          ))}
-        </div>
-      </section>
-    )
-  }
-
-  // ---- desktop: pinned, scroll-driven ----
+  // ---- pinned, scroll-driven (all sizes) ----
   return (
     <section id="build" ref={ref} className="relative bg-paper" style={{ height: `${100 + PER_ITEM_VH * (N - 1)}vh` }}>
-      <div className="sticky top-0 h-screen overflow-hidden">
+      <div className="sticky top-0 h-screen overflow-hidden" style={{ height: '100svh' }}>
         {/* header */}
-        <div className="absolute top-[12vh] left-8 right-8 flex items-baseline justify-between">
+        <div className="absolute top-[12vh] left-6 right-6 md:left-8 md:right-8 flex items-baseline justify-between">
           <p className="mono-caps" style={{ color: 'var(--ink-3)' }}>
             What we build
           </p>
@@ -182,10 +159,12 @@ const Build = () => {
         </motion.div>
 
         {/* footer: progress + cue + link */}
-        <div className="absolute bottom-[7vh] left-8 right-8 flex items-end justify-between">
+        <div className="absolute bottom-[7vh] left-6 right-6 md:left-8 md:right-8 flex items-end justify-between gap-6">
           <div>
             <p className="mono mb-3" style={{ color: 'var(--ink-3)' }}>
-              {current.kind === 'tech' ? 'capabilities' : 'work'} · scroll to move along →
+              {current.kind === 'tech' ? 'capabilities' : 'work'}
+              <span className="hidden md:inline"> · scroll to move along →</span>
+              <span className="md:hidden"> · scroll →</span>
             </p>
             <div className="flex gap-1.5">
               {ITEMS.map((it, i) => (
@@ -199,7 +178,7 @@ const Build = () => {
           </div>
           <a
             href="mailto:help@arcawave.xyz?subject=Project%20inquiry"
-            className="group text-[13px] font-medium inline-flex items-center gap-2 hover:opacity-70 transition-opacity"
+            className="group text-[13px] font-medium inline-flex items-center gap-2 whitespace-nowrap hover:opacity-70 transition-opacity"
           >
             Start a project
             <span aria-hidden className="inline-block transition-transform duration-500 ease-out-expo group-hover:translate-x-1">
@@ -280,7 +259,7 @@ const Card = ({ item, i, width, track, active }) => {
           {item.title}
         </span>
         {item.sub && (
-          <span className="text-[14px] shrink-0" style={{ color: 'var(--ink-2)' }}>
+          <span className="hidden md:inline text-[14px] shrink-0" style={{ color: 'var(--ink-2)' }}>
             {item.sub}
           </span>
         )}
@@ -290,6 +269,11 @@ const Card = ({ item, i, width, track, active }) => {
           </span>
         )}
       </div>
+      {item.sub && (
+        <p className="md:hidden mt-1 pl-[3%] text-[14px]" style={{ color: 'var(--ink-2)' }}>
+          {item.sub}
+        </p>
+      )}
     </Wrap>
   )
 }
