@@ -1,7 +1,7 @@
-import React, { useEffect, useRef } from 'react'
+import React, { useEffect, useRef, useState } from 'react'
 import { motion, useTransform } from 'framer-motion'
 import useScrollProgress from '../../hooks/useScrollProgress'
-import { BONES, KP_MIN } from './Track'
+import Track, { BONES, KP_MIN } from './Track'
 
 /**
  * Core — See. Understand. Respond.
@@ -24,6 +24,7 @@ const SCENE = '04-kids-cafe'
 const COLS = 168 // point grid resolution across the scene
 const ACCENT = [55, 76, 193]
 
+const SPLIT = 0.72 // share of the section used by the animation; the remainder holds the final screen
 const SEE = [0.02, 0.3]
 const UNDERSTAND = [0.3, 0.57]
 const RESPOND = [0.57, 0.82]
@@ -48,7 +49,10 @@ const TRAIL_DIR = {
 const Core = () => {
   const ref = useRef(null)
   const canvasRef = useRef(null)
-  const p = useScrollProgress(ref)
+  const raw = useScrollProgress(ref)
+  // the choreography plays over the first SPLIT of the section; the rest is a hold
+  // on the two-track screen so it does not flick past
+  const p = useTransform(raw, (v) => Math.min(1, v / SPLIT))
 
   // words + final block (DOM, on top of the canvas)
   const finalOpacity = useTransform(p, [0.85, 0.91], [0, 1])
@@ -274,7 +278,7 @@ const Core = () => {
   }, [p])
 
   return (
-    <section id="core" ref={ref} className="relative" style={{ height: '460vh' }}>
+    <section id="core" ref={ref} className="relative" style={{ height: '600vh' }}>
       <div className="sticky top-0 h-screen overflow-hidden" style={{ background: '#0B0B0C' }}>
         <canvas ref={canvasRef} className="absolute inset-0 w-full h-full" aria-hidden />
 
@@ -282,19 +286,161 @@ const Core = () => {
         <Word p={p} range={UNDERSTAND}>Understand.</Word>
         <Word p={p} range={RESPOND}>Respond.</Word>
 
+        {/* what it becomes: two tracks on the same intelligence */}
         <motion.div
-          className="absolute inset-0 flex flex-col items-center justify-center text-center px-6"
+          className="absolute inset-0 flex flex-col justify-center px-6 md:px-8 pt-16 md:pt-0"
           style={{ opacity: finalOpacity, y: finalY }}
         >
-          <p className="display text-white" style={{ fontSize: 'clamp(30px, 5.2vw, 76px)' }}>
-            See. Understand. Respond.
-          </p>
-          <motion.p className="mono mt-8" style={{ opacity: creditOpacity, color: 'rgba(255,255,255,0.45)' }}>
-            Powered by Computer Vision &amp; AI
-          </motion.p>
+          <div className="max-w-[1240px] w-full mx-auto">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-7 md:gap-16">
+              {TRACKS.map((t) => (
+                <div key={t.title}>
+                  <TrackVisual mode={t.mode} scene={t.scene} />
+                  <h3 className="display text-white mt-4 md:mt-8" style={{ fontSize: 'clamp(26px, 4.6vw, 64px)' }}>
+                    {t.title}
+                  </h3>
+                  <p className="mt-3 md:mt-5 text-[13px] md:text-[17px] leading-relaxed max-w-[38ch]" style={{ color: 'rgba(255,255,255,0.7)' }}>
+                    {t.body}
+                  </p>
+                  <div className="mt-4 md:mt-6 flex flex-wrap gap-2">
+                    {t.tags.map((g) => (
+                      <span key={g} className="mono" style={{ border: '1px solid rgba(255,255,255,0.22)', color: 'rgba(255,255,255,0.8)', padding: '5px 8px' }}>
+                        {g}
+                      </span>
+                    ))}
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
         </motion.div>
       </div>
     </section>
+  )
+}
+
+// TODO: draft copy — replace with the company's own words
+const TRACKS = [
+  {
+    title: 'Safety',
+    mode: 'safety',
+    scene: '03-playground',
+    body: 'Falls, collisions, a child alone too long. The space alerts in the moment and writes the safety report afterwards.',
+    tags: ['real-time alerts', 'incident detection', 'safety reports'],
+  },
+  {
+    title: 'Learning',
+    mode: 'learning',
+    scene: '01-classroom-desk',
+    body: 'Focus, activity, who plays with whom. The same eyes read how each child engages, and turn it into reports teachers and parents can act on.',
+    tags: ['focus & activity', 'participation', 'learning reports'],
+  },
+]
+
+/**
+ * TrackVisual — a small live sample of one track, drawn on a real scene.
+ *   safety:   one child is flagged; rings spread from them, an alert chip pulses.
+ *   learning: every child gets a small focus meter that fills up.
+ */
+const TrackVisual = ({ mode, scene }) => {
+  const [track, setTrack] = useState(null)
+  const stageRef = useRef(null)
+  const [k, setK] = useState(2)
+  useEffect(() => {
+    let alive = true
+    fetch(`/assets/scenes/${scene}/track.json`).then((r) => r.json()).then((t) => alive && setTrack(t))
+    return () => {
+      alive = false
+    }
+  }, [scene])
+  useEffect(() => {
+    const el = stageRef.current
+    if (!el || !track) return
+    const measure = () => setK(track.width / Math.max(1, el.clientWidth))
+    measure()
+    const ro = new ResizeObserver(measure)
+    ro.observe(el)
+    return () => ro.disconnect()
+  }, [track])
+
+  const base = `/assets/scenes/${scene}`
+  const flagged = mode === 'safety' ? 1 : -1 // index of the child the safety sample flags
+  const focus = [0.82, 0.64, 0.91, 0.47, 0.73]
+
+  return (
+    <div
+      ref={stageRef}
+      className="relative w-full overflow-hidden"
+      style={{
+        aspectRatio: 'var(--sv-ratio, 16 / 9)',
+        WebkitMaskImage: 'url(/assets/masks/torn-2.png)',
+        maskImage: 'url(/assets/masks/torn-2.png)',
+        WebkitMaskSize: '100% 100%',
+        maskSize: '100% 100%',
+      }}
+    >
+      <img src={`${base}/chunk.webp`} alt="" className="absolute inset-0 w-full h-full object-cover" style={{ filter: 'grayscale(1) brightness(0.5) contrast(1.1)' }} draggable={false} />
+      <img src={`${base}/people.webp`} alt="" className="absolute inset-0 w-full h-full object-cover" style={{ filter: 'grayscale(0.7) brightness(0.85)' }} draggable={false} />
+      {track && (
+        <svg className="absolute inset-0 w-full h-full overflow-visible" viewBox={`0 0 ${track.width} ${track.height}`}>
+          {track.people.map((q, i) => {
+            const W = track.width
+            const H = track.height
+            const [x0, y0, x1, y1] = [q.box[0] * W, q.box[1] * H, q.box[2] * W, q.box[3] * H]
+            const cx = (x0 + x1) / 2
+            const isFlag = i === flagged
+            return (
+              <g key={q.id}>
+                {isFlag && (
+                  <>
+                    {[0, 1, 2].map((r) => (
+                      <ellipse
+                        key={r}
+                        cx={cx}
+                        cy={y1}
+                        rx={(x1 - x0) * 0.9}
+                        ry={(x1 - x0) * 0.32}
+                        fill="none"
+                        stroke="#FF4D4D"
+                        strokeWidth="1.5"
+                        vectorEffect="non-scaling-stroke"
+                        className="sv-ring"
+                        style={{ animationDelay: `${r * 0.7}s`, transformOrigin: `${cx}px ${y1}px` }}
+                      />
+                    ))}
+                  </>
+                )}
+                <Track
+                  p={isFlag ? { ...q, label: 'alert · alone 4:12' } : mode === 'learning' ? { ...q, label: `focus ${Math.round(focus[i % focus.length] * 100)}%` } : q}
+                  W={W}
+                  H={H}
+                  k={k}
+                  animate={false}
+                  showChip={!isFlag && mode === 'learning'}
+                />
+                {isFlag && (
+                  <rect x={x0} y={y0 - 19 * k} width={(18 * 6.4 + 14) * k} height={15 * k} fill="#FF4D4D" className="sv-pulse" />
+                )}
+                {isFlag && (
+                  <text x={x0 + 6 * k} y={y0 - 19 * k + 15 * k * 0.72} fontFamily="var(--font-mono)" fontSize={9.5 * k} letterSpacing="0.05em" fill="#fff">
+                    alert · alone 4:12
+                  </text>
+                )}
+                {mode === 'learning' && (
+                  <>
+                    <rect x={x0} y={y1 + 6 * k} width={x1 - x0} height={3 * k} fill="rgba(255,255,255,0.18)" />
+                    <rect x={x0} y={y1 + 6 * k} width={(x1 - x0) * focus[i % focus.length]} height={3 * k} fill="var(--accent)" className="sv-bar" style={{ transformOrigin: `${x0}px ${y1}px`, animationDelay: `${i * 0.25}s` }} />
+                  </>
+                )}
+              </g>
+            )
+          })}
+        </svg>
+      )}
+      <div className="absolute left-[4%] top-[6%] mono" style={{ color: 'rgba(255,255,255,0.7)' }}>
+        {mode === 'safety' ? 'safety · live' : 'learning · this week'}
+      </div>
+    </div>
   )
 }
 

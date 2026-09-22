@@ -166,3 +166,19 @@ body {
 @media (min-width: 1024px) {
   .fragment-bleed { margin-right: calc(-1 * max(0px, (100vw - 1240px) / 2) - 2rem); }
 }
+
+/* track samples in the two-track screen */
+@keyframes sv-ring { 0% { transform: scale(0.3); opacity: 0.9; } 100% { transform: scale(1.6); opacity: 0; } }
+.sv-ring { animation: sv-ring 2.1s ease-out infinite; }
+@keyframes sv-pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.55; } }
+.sv-pulse { animation: sv-pulse 1s ease-in-out infinite; }
+@keyframes sv-bar { 0% { transform: scaleX(0); } 100% { transform: scaleX(1); } }
+.sv-bar { animation: sv-bar 1.4s cubic-bezier(0.22, 1, 0.36, 1) both; }
+@media (max-width: 767px) { :root { --sv-ratio: 16 / 7; } }
+
+/* What we're doing: pinned for ~one screen of scroll on desktop */
+.build-inner { padding-top: 14vh; padding-bottom: 14vh; }
+@media (min-width: 1024px) {
+  .build-pin { height: 190vh; }
+  .build-inner { position: sticky; top: 0; height: 100vh; display: flex; align-items: center; padding-top: 0; padding-bottom: 0; }
+}
