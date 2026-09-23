@@ -1,5 +1,6 @@
-import React, { useEffect, useState } from 'react'
+import React, { useEffect, useRef, useState } from 'react'
 import { motion } from 'framer-motion'
+import useScrollProgress from '../../hooks/useScrollProgress'
 import WorkModal from './WorkModal'
 
 /**
@@ -14,9 +15,9 @@ import WorkModal from './WorkModal'
 export const ITEMS = [
   {
     kind: 'work',
-    title: 'Mongle Kids',
-    type: 'Product',
-    caption: '2025 · Mongle Kids · at home',
+    title: 'MongleKids',
+    caption: 'AI Creative Companion · Anywhere',
+    point: 'A creative AI companion that grows with every child, wherever they are.',
     img: '/assets/images/work/monglekids-01.jpg',
     pos: '60% 40%',
     href: 'https://monglekids.com',
@@ -25,8 +26,8 @@ export const ITEMS = [
   {
     kind: 'work',
     title: 'Exhibitions',
-    type: 'Exhibition',
-    caption: '2 exhibitions · 2024–2025',
+    caption: 'Interactive AI Experiences · Public Spaces',
+    point: 'Public spaces that see who is there and play back.',
     img: '/assets/images/work/exhibition-01.jpg',
     pos: '78% 50%',
     // clicking opens these in a full-screen view
@@ -49,9 +50,9 @@ export const ITEMS = [
   },
   {
     kind: 'work',
-    title: 'Gamani : Classroom Vision',
-    type: 'Device',
-    caption: '2026 · Gamani · classroom',
+    title: 'Gamani : Classroom Intelligence',
+    caption: 'Safety & Learning Intelligence · Classrooms',
+    point: 'One device that keeps the classroom safe and shows how each child learns.',
     img: '/assets/images/work/gamani-01.jpg',
     pos: '50% 50%',
     // TODO: link or works list once there is somewhere to go
@@ -61,7 +62,19 @@ export const ITEMS = [
 const ease = [0.22, 1, 0.36, 1]
 
 const Build = () => {
+  const ref = useRef(null)
   const [openItem, setOpenItem] = useState(null)
+
+  // while the section holds, scrolling reveals each card's point in turn (they stay once shown)
+  const p = useScrollProgress(ref)
+  const [active, setActive] = useState(0)
+  useEffect(() => {
+    // none shown on arrival; one more appears at each step of the hold
+    const N = ITEMS.length
+    const pick = (v) => setActive(Math.min(N, Math.floor(v * (N + 1))))
+    pick(p.get())
+    return p.on('change', pick)
+  }, [p])
 
   // nav dropdown: categories with a works list open their full-screen view
   useEffect(() => {
@@ -77,7 +90,7 @@ const Build = () => {
   }, [])
 
   return (
-    <section id="build" className="relative bg-paper build-pin">
+    <section id="build" ref={ref} className="relative bg-paper build-pin">
       {/* on desktop the section pins for a beat so it does not flick past; phones scroll normally */}
       <div className="build-inner px-6 md:px-8">
       <div className="max-w-[1400px] mx-auto w-full">
@@ -99,7 +112,7 @@ const Build = () => {
               viewport={{ once: true, amount: 0.3 }}
               transition={{ duration: 0.8, delay: i * 0.12, ease }}
             >
-              <Card item={it} i={i} onOpen={it.works ? () => setOpenItem(it) : undefined} />
+              <Card item={it} i={i} lit={i < active} onOpen={it.works ? () => setOpenItem(it) : undefined} />
             </motion.div>
           ))}
         </div>
@@ -113,7 +126,7 @@ const Build = () => {
 }
 
 /** One work: a torn fragment + caption + title. */
-const Card = ({ item, i, onOpen }) => {
+const Card = ({ item, i, lit, onOpen }) => {
   const mask = `url(/assets/masks/torn-${(i % 3) + 1}.png)`
   const Wrap = item.href ? 'a' : onOpen ? 'button' : 'div'
 
@@ -149,9 +162,6 @@ const Card = ({ item, i, onOpen }) => {
         <span className="mono" style={{ background: 'var(--accent)', color: '#fff', padding: '4px 7px' }}>
           {item.caption}
         </span>
-        <span className="mono" style={{ color: 'var(--ink-3)' }}>
-          {item.type}
-        </span>
       </div>
       <div className="mt-3 pl-[3%] flex items-baseline justify-between gap-6">
         <span className="display" style={{ fontSize: 'clamp(22px, 2.2vw, 30px)', letterSpacing: '-0.02em' }}>
@@ -166,6 +176,15 @@ const Card = ({ item, i, onOpen }) => {
           </span>
         )}
       </div>
+      {item.point && (
+        <p
+          className="mt-3 pl-[3%] flex items-start gap-3 text-[15px] leading-relaxed max-w-[36ch] transition-[opacity,transform] duration-600 ease-out-expo"
+          style={{ color: 'var(--ink)', opacity: lit ? 1 : 0, transform: lit ? 'none' : 'translateY(6px)' }}
+        >
+          <span aria-hidden className="block shrink-0 mt-[9px] rounded-full" style={{ width: 6, height: 6, background: 'var(--accent)' }} />
+          <span>{item.point}</span>
+        </p>
+      )}
     </Wrap>
   )
 }

@@ -54,6 +54,13 @@ const Core = () => {
   // on the two-track screen so it does not flick past
   const p = useTransform(raw, (v) => Math.min(1, v / SPLIT))
 
+  // the hold (after SPLIT) plays two beats: Safety first, then Learning
+  const hold = useTransform(raw, (v) => Math.max(0, Math.min(1, (v - SPLIT) / (1 - SPLIT))))
+  const beatSafety = useTransform(hold, [0.04, 0.46], [0, 1])
+  const beatLearning = useTransform(hold, [0.54, 0.96], [0, 1])
+  const safetyDim = useTransform(hold, [0.46, 0.56], [1, 0.35])
+  const learningDim = useTransform(hold, [0, 0.46, 0.56], [0.35, 0.35, 1])
+
   // words + final block (DOM, on top of the canvas)
   const finalOpacity = useTransform(p, [0.85, 0.91], [0, 1])
   const finalY = useTransform(p, [0.85, 0.91], [10, 0])
@@ -294,8 +301,8 @@ const Core = () => {
           <div className="max-w-[1240px] w-full mx-auto">
             <div className="grid grid-cols-1 md:grid-cols-2 gap-7 md:gap-16">
               {TRACKS.map((t) => (
-                <div key={t.title}>
-                  <TrackVisual mode={t.mode} scene={t.scene} />
+                <motion.div key={t.title} style={{ opacity: t.mode === 'safety' ? safetyDim : learningDim }}>
+                  <TrackVisual mode={t.mode} scene={t.scene} beat={t.mode === 'safety' ? beatSafety : beatLearning} />
                   <h3 className="display text-white mt-4 md:mt-8" style={{ fontSize: 'clamp(26px, 4.6vw, 64px)' }}>
                     {t.title}
                   </h3>
@@ -309,7 +316,7 @@ const Core = () => {
                       </span>
                     ))}
                   </div>
-                </div>
+                </motion.div>
               ))}
             </div>
           </div>
@@ -342,13 +349,14 @@ const TRACKS = [
  *   safety:   one child is flagged; rings spread from them, an alert chip pulses.
  *   learning: every child gets a small focus meter that fills up.
  */
-const TrackVisual = ({ mode, scene }) => {
+const TrackVisual = ({ mode, scene, beat }) => {
   const [track, setTrack] = useState(null)
   const stageRef = useRef(null)
   const [k, setK] = useState(2)
+  const [t, setT] = useState(0) // 0..1 within this track's beat
   useEffect(() => {
     let alive = true
-    fetch(`/assets/scenes/${scene}/track.json`).then((r) => r.json()).then((t) => alive && setTrack(t))
+    fetch(`/assets/scenes/${scene}/track.json`).then((r) => r.json()).then((d) => alive && setTrack(d))
     return () => {
       alive = false
     }
@@ -362,38 +370,59 @@ const TrackVisual = ({ mode, scene }) => {
     ro.observe(el)
     return () => ro.disconnect()
   }, [track])
+  useEffect(() => {
+    if (!beat) return
+    setT(beat.get())
+    return beat.on('change', (v) => setT(v))
+  }, [beat])
 
   const base = `/assets/scenes/${scene}`
-  const flagged = mode === 'safety' ? 1 : -1 // index of the child the safety sample flags
+  const flagged = mode === 'safety' ? 2 : -1 // the child climbing the rope ladder
   const focus = [0.82, 0.64, 0.91, 0.47, 0.73]
 
+  // safety: time passes with scroll; the alert fires at ALERT_AT
+  const ALERT_AT = 0.55
+  const height = (2.2 * Math.min(1, t / ALERT_AT)).toFixed(1) // metres climbed
+  const alert = mode === 'safety' && t >= ALERT_AT
+  const logged = t >= 0.82
+
+  // learning: meters fill with scroll
+  const fill = Math.min(1, t / 0.7)
+  const avg = Math.round((focus.reduce((a, b) => a + b, 0) / focus.length) * 100 * fill)
+
+  const chipFor = (q, i) => {
+    if (mode === 'learning') return { ...q, label: `focus ${Math.round(focus[i % focus.length] * 100 * fill)}%` }
+    return q
+  }
+
   return (
-    <div
-      ref={stageRef}
-      className="relative w-full overflow-hidden"
-      style={{
-        aspectRatio: 'var(--sv-ratio, 16 / 9)',
-        WebkitMaskImage: 'url(/assets/masks/torn-2.png)',
-        maskImage: 'url(/assets/masks/torn-2.png)',
-        WebkitMaskSize: '100% 100%',
-        maskSize: '100% 100%',
-      }}
-    >
-      <img src={`${base}/chunk.webp`} alt="" className="absolute inset-0 w-full h-full object-cover" style={{ filter: 'grayscale(1) brightness(0.5) contrast(1.1)' }} draggable={false} />
-      <img src={`${base}/people.webp`} alt="" className="absolute inset-0 w-full h-full object-cover" style={{ filter: 'grayscale(0.7) brightness(0.85)' }} draggable={false} />
-      {track && (
-        <svg className="absolute inset-0 w-full h-full overflow-visible" viewBox={`0 0 ${track.width} ${track.height}`}>
-          {track.people.map((q, i) => {
-            const W = track.width
-            const H = track.height
-            const [x0, y0, x1, y1] = [q.box[0] * W, q.box[1] * H, q.box[2] * W, q.box[3] * H]
-            const cx = (x0 + x1) / 2
-            const isFlag = i === flagged
-            return (
-              <g key={q.id}>
-                {isFlag && (
-                  <>
-                    {[0, 1, 2].map((r) => (
+    <div className="relative">
+      <div
+        ref={stageRef}
+        className="relative w-full overflow-hidden"
+        style={{
+          aspectRatio: 'var(--sv-ratio, 16 / 9)',
+          WebkitMaskImage: 'url(/assets/masks/torn-2.png)',
+          maskImage: 'url(/assets/masks/torn-2.png)',
+          WebkitMaskSize: '100% 100%',
+          maskSize: '100% 100%',
+        }}
+      >
+        <img src={`${base}/chunk.webp`} alt="" className="absolute inset-0 w-full h-full object-cover" style={{ filter: 'grayscale(1) brightness(0.5) contrast(1.1)' }} draggable={false} />
+        <img src={`${base}/people.webp`} alt="" className="absolute inset-0 w-full h-full object-cover" style={{ filter: 'grayscale(0.7) brightness(0.85)' }} draggable={false} />
+        {track && (
+          <svg className="absolute inset-0 w-full h-full overflow-visible" viewBox={`0 0 ${track.width} ${track.height}`}>
+            {track.people.map((q, i) => {
+              const W = track.width
+              const H = track.height
+              const [x0, y0, x1, y1] = [q.box[0] * W, q.box[1] * H, q.box[2] * W, q.box[3] * H]
+              const cx = (x0 + x1) / 2
+              const isFlag = i === flagged
+              const color = isFlag && alert ? '#FF4D4D' : 'var(--accent)'
+              return (
+                <g key={q.id}>
+                  {isFlag && alert &&
+                    [0, 1, 2].map((r) => (
                       <ellipse
                         key={r}
                         cx={cx}
@@ -408,37 +437,46 @@ const TrackVisual = ({ mode, scene }) => {
                         style={{ animationDelay: `${r * 0.7}s`, transformOrigin: `${cx}px ${y1}px` }}
                       />
                     ))}
-                  </>
-                )}
-                <Track
-                  p={isFlag ? { ...q, label: 'alert · alone 4:12' } : mode === 'learning' ? { ...q, label: `focus ${Math.round(focus[i % focus.length] * 100)}%` } : q}
-                  W={W}
-                  H={H}
-                  k={k}
-                  animate={false}
-                  showChip={!isFlag && mode === 'learning'}
-                />
-                {isFlag && (
-                  <rect x={x0} y={y0 - 19 * k} width={(18 * 6.4 + 14) * k} height={15 * k} fill="#FF4D4D" className="sv-pulse" />
-                )}
-                {isFlag && (
-                  <text x={x0 + 6 * k} y={y0 - 19 * k + 15 * k * 0.72} fontFamily="var(--font-mono)" fontSize={9.5 * k} letterSpacing="0.05em" fill="#fff">
-                    alert · alone 4:12
-                  </text>
-                )}
-                {mode === 'learning' && (
-                  <>
-                    <rect x={x0} y={y1 + 6 * k} width={x1 - x0} height={3 * k} fill="rgba(255,255,255,0.18)" />
-                    <rect x={x0} y={y1 + 6 * k} width={(x1 - x0) * focus[i % focus.length]} height={3 * k} fill="var(--accent)" className="sv-bar" style={{ transformOrigin: `${x0}px ${y1}px`, animationDelay: `${i * 0.25}s` }} />
-                  </>
-                )}
-              </g>
-            )
-          })}
-        </svg>
-      )}
-      <div className="absolute left-[4%] top-[6%] mono" style={{ color: 'rgba(255,255,255,0.7)' }}>
-        {mode === 'safety' ? 'safety · live' : 'learning · this week'}
+                  <Track p={chipFor(q, i)} W={W} H={H} k={k} animate={false} showChip={!isFlag && mode === 'learning'} />
+                  {isFlag && (
+                    <g>
+                      <rect x={x0} y={y0 - 19 * k} width={(alert ? 17 * 6.4 + 14 : 14 * 6.4 + 14) * k} height={15 * k} fill={color} className={alert ? 'sv-pulse' : ''} />
+                      <text x={x0 + 6 * k} y={y0 - 19 * k + 15 * k * 0.72} fontFamily="var(--font-mono)" fontSize={9.5 * k} letterSpacing="0.05em" fill="#fff">
+                        {alert ? 'alert · fall risk' : `climbing · ${height} m`}
+                      </text>
+                    </g>
+                  )}
+                  {mode === 'learning' && (
+                    <>
+                      <rect x={x0} y={y1 + 6 * k} width={x1 - x0} height={3 * k} fill="rgba(255,255,255,0.18)" />
+                      <rect x={x0} y={y1 + 6 * k} width={(x1 - x0) * focus[i % focus.length] * fill} height={3 * k} fill="var(--accent)" />
+                    </>
+                  )}
+                </g>
+              )
+            })}
+          </svg>
+        )}
+        <div className="absolute left-[4%] top-[6%] mono" style={{ color: 'rgba(255,255,255,0.7)' }}>
+          {mode === 'safety' ? 'safety · live' : 'learning · this week'}
+        </div>
+      </div>
+        {/* the big number: what you actually watch move */}
+        <div className="absolute right-[3%] bottom-[10%] text-right" style={{ color: alert ? '#FF4D4D' : '#fff' }}>
+          <div className="display" style={{ fontSize: 'clamp(36px, 4.2vw, 60px)', fontVariantNumeric: 'tabular-nums', lineHeight: 1 }}>
+            {mode === 'safety' ? `${height} m` : `${avg}%`}
+          </div>
+          <div className="mono mt-2" style={{ color: alert ? '#FF4D4D' : 'rgba(255,255,255,0.65)' }}>
+            {mode === 'safety' ? (alert ? 'above safe height' : 'climbing height') : 'avg focus'}
+          </div>
+        </div>
+
+      {/* the outcome line, written once the event has played out */}
+      <div
+        className="mono mt-3 pl-[3%] transition-opacity duration-500"
+        style={{ color: mode === 'safety' ? '#FF4D4D' : 'var(--accent)', opacity: logged ? 1 : 0 }}
+      >
+        {mode === 'safety' ? 'fall risk logged · 14:32 · playground · 2 staff notified' : 'weekly report ready · focus ↑12% · participation 4 / 5'}
       </div>
     </div>
   )

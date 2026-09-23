@@ -179,6 +179,6 @@ body {
 /* What we're doing: pinned for ~one screen of scroll on desktop */
 .build-inner { padding-top: 14vh; padding-bottom: 14vh; }
 @media (min-width: 1024px) {
-  .build-pin { height: 190vh; }
+  .build-pin { height: 260vh; }
   .build-inner { position: sticky; top: 0; height: 100vh; display: flex; align-items: center; padding-top: 0; padding-bottom: 0; }
 }

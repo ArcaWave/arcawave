@@ -6,12 +6,11 @@ import useScrollProgress from '../../hooks/useScrollProgress'
  * Vision — back to nothing. Two sentences, one after the other, then the
  * smallest possible sign-off.
  */
-// TODO: draft copy — replace with the company's own words
 const ABOUT = {
-  title: 'Spatial intelligence for real places.',
+  title: 'AI for how children learn, play, and grow.',
   body:
-    'Arcawave builds spaces that respond to the people inside them. With computer vision and AI we read behavior in real environments like classrooms, playgrounds and exhibitions, and turn it into experiences that adapt. Our first product, Mongle Kids, brings this to children aged 5 to 9.',
-  facts: ['Seoul', 'Emeryville, CA', 'Founded 2026'],
+    'Arcawave builds AI products and experiences designed around children. From creative learning with MongleKids, to interactive exhibitions, to classroom intelligence with Gamani, we use AI to support how children learn, play, stay safe, and grow.',
+  keywords: ['Creativity', 'Play', 'Behavior', 'Safety', 'Development'],
 }
 
 // TODO: confirm the list — these came from the previous site's partner cards
@@ -63,7 +62,7 @@ const Vision = () => {
                   </p>
                 </Reveal>
                 <Reveal delay={0.08}>
-                  <h2 className="display mt-6" style={{ fontSize: 'clamp(28px, 3.6vw, 52px)', maxWidth: '16ch' }}>
+                  <h2 className="display mt-6" style={{ fontSize: 'clamp(28px, 3.6vw, 52px)', maxWidth: '18ch' }}>
                     {ABOUT.title}
                   </h2>
                 </Reveal>
@@ -76,9 +75,12 @@ const Vision = () => {
                   </p>
                 </Reveal>
                 <Reveal delay={0.24}>
-                  <ul className="mono mt-8 flex flex-wrap gap-x-6 gap-y-2" style={{ color: 'var(--ink-3)' }}>
-                    {ABOUT.facts.map((f) => (
-                      <li key={f}>{f}</li>
+                  <ul className="mt-8 flex flex-wrap gap-x-5 gap-y-2 text-[14px] font-medium">
+                    {ABOUT.keywords.map((w) => (
+                      <li key={w} className="flex items-center gap-2">
+                        <span aria-hidden className="block rounded-full" style={{ width: 5, height: 5, background: 'var(--accent)' }} />
+                        {w}
+                      </li>
                     ))}
                   </ul>
                 </Reveal>
