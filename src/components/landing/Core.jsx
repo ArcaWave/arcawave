@@ -295,7 +295,7 @@ const Core = () => {
 
         {/* what it becomes: two tracks on the same intelligence */}
         <motion.div
-          className="absolute inset-0 flex flex-col justify-center px-6 md:px-8 pt-16 md:pt-0"
+          className="absolute inset-0 flex flex-col justify-center px-6 md:px-8 pt-14 md:pt-0"
           style={{ opacity: finalOpacity, y: finalY }}
         >
           <div className="max-w-[1240px] w-full mx-auto">
@@ -309,7 +309,7 @@ const Core = () => {
                   <p className="mt-3 md:mt-5 text-[13px] md:text-[17px] leading-relaxed max-w-[38ch]" style={{ color: 'rgba(255,255,255,0.7)' }}>
                     {t.body}
                   </p>
-                  <div className="mt-4 md:mt-6 flex flex-wrap gap-2">
+                  <div className="mt-4 md:mt-6 hidden md:flex flex-wrap gap-2">
                     {t.tags.map((g) => (
                       <span key={g} className="mono" style={{ border: '1px solid rgba(255,255,255,0.22)', color: 'rgba(255,255,255,0.8)', padding: '5px 8px' }}>
                         {g}
@@ -461,9 +461,28 @@ const TrackVisual = ({ mode, scene, beat }) => {
           {mode === 'safety' ? 'safety · live' : 'learning · this week'}
         </div>
       </div>
-        {/* the big number: what you actually watch move */}
-        <div className="absolute right-[3%] bottom-[10%] text-right" style={{ color: alert ? '#FF4D4D' : '#fff' }}>
-          <div className="display" style={{ fontSize: 'clamp(36px, 4.2vw, 60px)', fontVariantNumeric: 'tabular-nums', lineHeight: 1 }}>
+        {/* below the visual: outcome line (left) and, on phones, the big number (right) */}
+      <div className="mt-3 flex items-end justify-between gap-4">
+      {/* the outcome line, written once the event has played out */}
+      <div
+        className="mono pl-[3%] transition-opacity duration-500 text-[10px] md:text-[11px] leading-snug"
+        style={{ color: mode === 'safety' ? '#FF4D4D' : 'var(--accent)', opacity: logged ? 1 : 0 }}
+      >
+        {mode === 'safety' ? (
+          <>
+            <span className="hidden md:inline">fall risk logged · 14:32 · playground · 2 staff notified</span>
+            <span className="md:hidden">fall risk logged · 2 staff notified</span>
+          </>
+        ) : (
+          <>
+            <span className="hidden md:inline">weekly report ready · focus ↑12% · participation 4 / 5</span>
+            <span className="md:hidden">weekly report ready · focus ↑12%</span>
+          </>
+        )}
+      </div>
+      {/* the big number: what you actually watch move */}
+        <div className="shrink-0 text-right md:absolute md:right-[3%] md:bottom-[12%]" style={{ color: alert ? '#FF4D4D' : '#fff' }}>
+          <div className="display" style={{ fontSize: 'clamp(26px, 4.2vw, 60px)', fontVariantNumeric: 'tabular-nums', lineHeight: 1 }}>
             {mode === 'safety' ? `${height} m` : `${avg}%`}
           </div>
           <div className="mono mt-2" style={{ color: alert ? '#FF4D4D' : 'rgba(255,255,255,0.65)' }}>
@@ -471,12 +490,6 @@ const TrackVisual = ({ mode, scene, beat }) => {
           </div>
         </div>
 
-      {/* the outcome line, written once the event has played out */}
-      <div
-        className="mono mt-3 pl-[3%] transition-opacity duration-500"
-        style={{ color: mode === 'safety' ? '#FF4D4D' : 'var(--accent)', opacity: logged ? 1 : 0 }}
-      >
-        {mode === 'safety' ? 'fall risk logged · 14:32 · playground · 2 staff notified' : 'weekly report ready · focus ↑12% · participation 4 / 5'}
       </div>
     </div>
   )

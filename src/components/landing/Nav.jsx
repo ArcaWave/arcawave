@@ -65,7 +65,8 @@ const Nav = () => {
               onBlur={hide}
               aria-haspopup="menu"
               aria-expanded={open}
-              className="hidden sm:inline-flex items-center gap-1.5 opacity-80 hover:opacity-100 transition-opacity"
+              onClick={jumpTo('build')}
+              className="inline-flex items-center gap-1.5 opacity-80 hover:opacity-100 transition-opacity"
             >
               Work
             </a>

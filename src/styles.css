@@ -174,7 +174,7 @@ body {
 .sv-pulse { animation: sv-pulse 1s ease-in-out infinite; }
 @keyframes sv-bar { 0% { transform: scaleX(0); } 100% { transform: scaleX(1); } }
 .sv-bar { animation: sv-bar 1.4s cubic-bezier(0.22, 1, 0.36, 1) both; }
-@media (max-width: 767px) { :root { --sv-ratio: 16 / 7; } }
+@media (max-width: 767px) { :root { --sv-ratio: 16 / 8; } }
 
 /* What we're doing: pinned for ~one screen of scroll on desktop */
 .build-inner { padding-top: 14vh; padding-bottom: 14vh; }
