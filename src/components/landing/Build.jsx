@@ -11,7 +11,6 @@ import WorkModal from './WorkModal'
  * A category with several works opens a full-screen view on click.
  */
 
-// TODO: Exhibitions still uses a stand-in photo; drop real stills into public/assets/images/work/
 export const ITEMS = [
   {
     kind: 'work',
@@ -29,23 +28,23 @@ export const ITEMS = [
     title: 'Exhibitions',
     caption: 'Interactive AI Experiences · Public Spaces',
     point: 'Public spaces that see who is there and play back.',
-    img: '/assets/images/work/exhibition-01.jpg',
-    pos: '78% 50%',
-    // clicking opens these in a full-screen view
+    img: '/assets/images/work/hyundai-pangyo-01.jpg',
+    pos: '35% 55%',
+    // clicking opens these in a full-screen view (newest first)
     works: [
       {
-        title: 'Interactive media wall',
-        caption: '2024 · Media wall · Seoul',
-        img: '/assets/images/work/exhibition-01.jpg',
-        pos: '78% 50%',
-        desc: 'A wall of screens that notices who is in front of it and answers with light and motion.',
+        title: 'AI Creation Exhibition',
+        caption: '2026 Sep · The Hyundai Pangyo',
+        img: '/assets/images/work/hyundai-pangyo-01.jpg',
+        pos: '35% 55%',
+        desc: 'Mongle House at The Hyundai Pangyo: an autumn playground where children drew, built, and brought their own creations to life with AI.',
       },
       {
-        title: 'Responsive pop-up',
-        caption: '2025 · Pop-up · Seoul',
-        img: '/assets/images/work/popup-01.jpg',
-        pos: '50% 60%',
-        desc: 'A temporary space that changes its pace with the people moving through it.',
+        title: 'Summer Creativity Lab',
+        caption: '2026 Jul · Austin, TX',
+        img: '/assets/images/work/austin-lab-01.jpg',
+        pos: '50% 45%',
+        desc: 'A pop-up creation lab in Austin where kids turned real vegetables into living creatures with MongleKids.',
       },
     ],
   },
