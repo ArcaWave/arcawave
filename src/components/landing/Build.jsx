@@ -11,15 +11,16 @@ import WorkModal from './WorkModal'
  * A category with several works opens a full-screen view on click.
  */
 
-// TODO: replace the stand-in photos with real project stills in public/assets/images/work/
+// TODO: Exhibitions still uses a stand-in photo; drop real stills into public/assets/images/work/
 export const ITEMS = [
   {
     kind: 'work',
     title: 'MongleKids',
     caption: 'AI Creative Companion · Anywhere',
     point: 'A creative AI companion that grows with every child, wherever they are.',
-    img: '/assets/images/work/monglekids-01.jpg',
-    pos: '60% 40%',
+    img: '/assets/images/work/monglekids-01-poster.jpg',
+    video: { mp4: '/assets/videos/work/monglekids-01.mp4', webm: '/assets/videos/work/monglekids-01.webm' },
+    pos: '50% 50%',
     href: 'https://monglekids.com',
     external: true,
   },
@@ -149,13 +150,29 @@ const Card = ({ item, i, lit, onOpen }) => {
           maskSize: '100% 100%',
         }}
       >
-        <img
-          src={item.img}
-          alt=""
-          className="absolute inset-0 w-full h-full object-cover fragment-img"
-          style={{ objectPosition: item.pos }}
-          draggable={false}
-        />
+        {item.video ? (
+          <video
+            className="absolute inset-0 w-full h-full object-cover fragment-img"
+            style={{ objectPosition: item.pos }}
+            poster={item.img}
+            autoPlay
+            muted
+            loop
+            playsInline
+            preload="metadata"
+          >
+            <source src={item.video.webm} type="video/webm" />
+            <source src={item.video.mp4} type="video/mp4" />
+          </video>
+        ) : (
+          <img
+            src={item.img}
+            alt=""
+            className="absolute inset-0 w-full h-full object-cover fragment-img"
+            style={{ objectPosition: item.pos }}
+            draggable={false}
+          />
+        )}
       </div>
 
       <div className="mt-4 flex items-center gap-3 pl-[3%]">
